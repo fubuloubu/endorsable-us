@@ -1,3 +1,5 @@
+<script src="src/get-url-parameters.js"/>
+<script src="src/firebase-user-logic.js"/>
 <!-- Firebase Authentication Data Check -->
 <script type="text/javascript">
 window.onload = function(error) {
@@ -6,24 +8,19 @@ window.onload = function(error) {
 
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
+            // At this point, we have an authenticated user
             window.user = user;
+            // If there's a profile link on this page, have it navigate to the user's own profile page
+            document.getElementById('profile').href = '{{ site.baseurl }}/user?uid=' + window.user.uid;
+            // Make sure user is in the system
+            //add_user();
+            // If there is application logic on this page, execute it
+            //if (page_logic) page_logic();
         } else {
+            // Redirect to login page
             window.location.href = '{{ site.baseurl }}/login';
         }
     });
-    
-    // If user is not in system, add them!
-    var user_ref = database.ref('users/' + window.user.uid);
-    if (!user_ref) {
-        user_ref.set({
-            name: window.user.displayName,
-            photo: window.user.photoURL,
-        });
-        alert(user_ref);
-    }
-    
-    // If there's a profile link, have it navigate to the user's own profile page
-    document.getElementById('profile').href = '{{ site.baseurl }}/user?uid=' + window.user.uid;
     
     // If there's a sign out button, add sign out method to it
     document.getElementById('sign-out').onclick = function() { 

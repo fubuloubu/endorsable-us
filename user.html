@@ -2,4 +2,11 @@
 layout: default
 permalink: /user
 ---
-Profile
+<p>Profile: <span id="user-name"/></p>
+
+<script type="text/javascript">
+function page_logic() {
+    alert('User finished loading!');
+    document.getElementById('user-name').text = 'Bob Johnson!';
+}
+</script>
