@@ -1,4 +1,0 @@
----
-layout: login
-permalink: /login
----

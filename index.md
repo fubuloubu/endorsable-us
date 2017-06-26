@@ -1,4 +1,0 @@
----
-layout: timeline
----
-Timeline
