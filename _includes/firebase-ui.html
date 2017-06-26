@@ -4,7 +4,6 @@
 <script type="text/javascript">
   // FirebaseUI config.
   var uiConfig = {
-    // TODO: Redirect to timeline page instead of index.html
     signInSuccessUrl: '{{ site.baseurl }}/home',
     signInOptions: [
       firebase.auth.GoogleAuthProvider.PROVIDER_ID,
@@ -12,8 +11,7 @@
       firebase.auth.EmailAuthProvider.PROVIDER_ID,
       //firebase.auth.PhoneAuthProvider.PROVIDER_ID,
     ],
-    // TODO: Add terms of service page
-    tosUrl: '<terms-of-service-page>'
+    tosUrl: '{{ site.baseurl }}/terms-of-service'
   };
 
   // Initialize the FirebaseUI Widget using Firebase.
