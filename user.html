@@ -5,7 +5,7 @@ permalink: /user
 <p>Profile: <span id="user"></span></p>
 
 <script type="text/javascript">
-function user_auth() {
+function after_user_auth() {
     var user = get_user();
     document.getElementById('user').innerHTML = user.displayName;
 }

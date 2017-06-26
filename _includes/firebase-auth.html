@@ -11,10 +11,8 @@ window.onload = function(error) {
             window.user = user;
             // If there's a profile link on this page, have it navigate to the user's own profile page
             document.getElementById('profile').href = '{{ site.baseurl }}/user?uid=' + window.user.uid;
-            // Make sure user is in the system
-            add_user();
             // If there is application logic on this page, execute it
-            if (user_auth) user_auth();
+            if (after_user_auth) after_user_auth();
         } else {
             // Redirect to login page
             window.location.href = '{{ site.baseurl }}/login';
