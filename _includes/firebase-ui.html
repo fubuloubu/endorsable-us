@@ -1,0 +1,25 @@
+<!-- FirebaseUI Authentication -->
+<script src="https://cdn.firebase.com/libs/firebaseui/2.2.1/firebaseui.js"></script>
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.2.1/firebaseui.css" />
+<script type="text/javascript">
+  // FirebaseUI config.
+  var uiConfig = {
+    // TODO: Redirect to timeline page instead of index.html
+    signInSuccessUrl: 'index.html',
+    signInOptions: [
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      //firebase.auth.GithubAuthProvider.PROVIDER_ID,
+      firebase.auth.EmailAuthProvider.PROVIDER_ID,
+      //firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+    ],
+    // TODO: Add terms of service page
+    tosUrl: '<terms-of-service-page>'
+  };
+
+  // Initialize the FirebaseUI Widget using Firebase.
+  var ui = new firebaseui.auth.AuthUI(firebase.auth());
+  // The start method will wait until the DOM is loaded.
+  ui.start('#firebaseui-auth-container', uiConfig);
+  // (Requires authorization container for sign-in buttons)
+</script>
+<!-- FirebaseUI Authentication -->
