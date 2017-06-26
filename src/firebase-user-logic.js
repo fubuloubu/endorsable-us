@@ -9,6 +9,10 @@ function add_user() {
     }
 }
 
+function get_user() {
+    return window.user;
+}
+
 //Invite a new user (anonmyous?)
 //Add endorsement to another user
 //Accept and endorsement
