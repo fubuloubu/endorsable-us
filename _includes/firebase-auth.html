@@ -1,52 +1,29 @@
 
 <!-- Firebase Authentication Data Check -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript">
-$( window ).on('load', function() {
+window.onload = function(error) {
+    if (error)
+        console.log(error);
+
     firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        // User is signed in.
-        var displayName = user.displayName;
-        var email = user.email;
-        var emailVerified = user.emailVerified;
-        var photoURL = user.photoURL;
-        var uid = user.uid;
-        var phoneNumber = user.phoneNumber;
-        //var providerData = user.providerData;
-        user.getToken().then(function(accessToken) {
-          $('#sign-in-status').text('Signed in');
-          $('#sign-out-btn').show();
-          $('firebaseui-auth-container').hide();
-          $('#account-details').text(JSON.stringify({
-            displayName: displayName,
-            email: email,
-            emailVerified: emailVerified,
-            phoneNumber: phoneNumber,
-            photoURL: photoURL,
-            uid: uid.substring(0,5) + '...',
-            accessToken: accessToken.substring(0,5) + '...'
-          }, null, 2));
-        });
-      } else {
-        // User is signed out.
-        // TODO: Redirect to sign-in page
-        $('#sign-in-status').text('Signed out');
-        $('#account-details').text('null');
-        $('#sign-out-btn').hide();
-        $('#firebaseui-auth-container').show();
-      }
+        if (user) {
+            window.user = user;
+        } else {
+            // GOTO sign-in page
+            window.location.href = '{{ site.baseurl }}/login';
+        }
     });
-    // Sign out user and force reload page 
-    //(to redirect to sign-in page from above)
-    $('#sign-out-btn').click( function() {
-        firebase.auth().signOut().then(function() {
-            console.log('Signed Out');
-        }, function(error) {
-            console.error('Sign Out Error', error);
-        });
-        location.reload();
-    });
-});
-// (See above for any required UI elements)
+    
+    // If there's a home button, have it navigate to the user's own profile page
+    document.getElementById('home-btn').onclick = function() {
+            window.location.href = '{{ site.baseurl }}/user?uid=' + window.user.uid;
+    };
+    
+    // If there's a sign out button, add sign out method to it
+    document.getElementById('sign-out-btn').onclick = function() { 
+        firebase.auth().signOut(); 
+        window.location.href = '{{ site.baseurl }}/login';
+    };
+};
 </script>
 <!-- Firebase Authentication Data Check --> 

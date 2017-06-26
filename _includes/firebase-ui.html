@@ -5,7 +5,7 @@
   // FirebaseUI config.
   var uiConfig = {
     // TODO: Redirect to timeline page instead of index.html
-    signInSuccessUrl: 'index.html',
+    signInSuccessUrl: '{{ site.baseurl }}/home',
     signInOptions: [
       firebase.auth.GoogleAuthProvider.PROVIDER_ID,
       //firebase.auth.GithubAuthProvider.PROVIDER_ID,
