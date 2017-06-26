@@ -1,7 +1,5 @@
 title: endorsable.us
 author: the endorsable team
-description: > # this means to ignore newlines until "baseurl:"
-  endorsable.us is a...
 baseurl: ""
 url: "endorsable.us"
 
