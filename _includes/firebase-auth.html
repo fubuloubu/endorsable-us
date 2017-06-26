@@ -1,4 +1,3 @@
-
 <!-- Firebase Authentication Data Check -->
 <script type="text/javascript">
 window.onload = function(error) {
@@ -9,20 +8,27 @@ window.onload = function(error) {
         if (user) {
             window.user = user;
         } else {
-            // GOTO sign-in page
             window.location.href = '{{ site.baseurl }}/login';
         }
     });
     
-    // If there's a home button, have it navigate to the user's own profile page
-    document.getElementById('home-btn').onclick = function() {
-            window.location.href = '{{ site.baseurl }}/user?uid=' + window.user.uid;
-    };
+    // If user is not in system, add them!
+    var user_ref = database.ref('users/' + window.user.uid);
+    if (!user_ref) {
+        user_ref.set({
+            name: window.user.displayName,
+            photo: window.user.photoURL,
+        });
+        alert(user_ref);
+    }
+    
+    // If there's a profile link, have it navigate to the user's own profile page
+    document.getElementById('profile').href = '{{ site.baseurl }}/user?uid=' + window.user.uid;
     
     // If there's a sign out button, add sign out method to it
-    document.getElementById('sign-out-btn').onclick = function() { 
-        firebase.auth().signOut(); 
-        window.location.href = '{{ site.baseurl }}/login';
+    document.getElementById('sign-out').onclick = function() { 
+        firebase.auth().signOut();
+        return true; // This allows the hyperlink to process
     };
 };
 </script>
