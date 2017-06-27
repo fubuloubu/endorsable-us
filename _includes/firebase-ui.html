@@ -2,6 +2,9 @@
 <script src="https://cdn.firebase.com/libs/firebaseui/2.2.1/firebaseui.js"></script>
 <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.2.1/firebaseui.css" />
 <script type="text/javascript">
+  // Set the 'home' button to redirect to login page
+  // (If we're including this snippet of HTML, the user is logged out)
+  document.getElementById('home').href = "{{ site.baseurl }}/login"
   // FirebaseUI config.
   var uiConfig = {
     signInSuccessUrl: '{{ site.baseurl }}/',

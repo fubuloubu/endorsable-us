@@ -3,12 +3,15 @@
 
   <head>
     {% include head.html %}
+    {% include firebase-auth.html %}
   </head>
 
   <body>
     <header class="site-header" role="banner">
       <div class="wrapper">
         {% include header.html %}
+        <a class="page-link" id="profile">My Profile</a>
+        <a class="page-link" id="sign-out" href="{{ site.baseurl }}/login">Sign Out</a>
       </div>
     </header>
 
