@@ -32,23 +32,43 @@ function idx_from_str(str) {
 		hval ^= str.charCodeAt(i);
 		hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
 	}
-	return hval >>> 0;
+	return (hval >>> 0).toString();
+}
+
+function process_datetime(timestamp) {
+    // If no date provided, use now
+    if (!timestamp)
+        var timestamp = new Date();
+    
+    // Format is yyyy MMM (dd)
+    // This format is used for searching by date
+    var processed_datetime = timestamp.getFullYear() + ' ';
+    // Provide full month names
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+    processed_datetime += monthNames[timestamp.getMonth()];
+    
+    // Date is optional
+    var dd = timestamp.getDate();
+    if (dd) processed_datetime += ' ' + dd;
+    
+    return processed_datetime;
 }
 
 //Invite a new user (anonmyous account until sign-up?)
 //TODO
 
 //Add endorsement to another user
-function add_endorsements(user_to, endorsement_text, post_time) {
+function add_endorsement(user_to, endorsement_text, post_time) {
     var database = get_database();
     var user_from = get_user();
-    var time = post_time ? post_time : now();
-    var idx = idx_from_str(endorsement_text);
+    var idx = idx_from_str(user_from.id+endorsement_text);
     database.ref('pending/' + user_to.uid + '/' + idx).set({
         text: endorsement_text,
         from: user_from.uid,
-        time: time,
-        finalized: true,
+        time: post_time,
+        finalized: true
     });
 }
 
