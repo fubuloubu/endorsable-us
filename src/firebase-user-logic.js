@@ -32,7 +32,7 @@ function idx_from_str(str) {
 		hval ^= str.charCodeAt(i);
 		hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
 	}
-	return (hval >>> 0).toString();
+	return '0x' + (hval >>> 0).toString(16); // Hex String
 }
 
 function process_datetime(timestamp) {
