@@ -9,6 +9,7 @@ window.onload = function(error) {
         if (user) {
             // At this point, we have an authenticated user
             window.user = user;
+            add_user(user);
             // If there's a profile link on this page, have it navigate to the user's own profile page
             document.getElementById('profile').href = '{{ site.baseurl }}/user?uid=' + window.user.uid;
             // If there is application logic on this page, execute it
