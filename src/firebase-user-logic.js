@@ -6,14 +6,28 @@ function get_user() {
     return window.user;
 }
 
-//Get endorsements (sort by data)
-function get_endorsements_by_user(user) {
+function get_current_uid() {
+    return get_user().uid;
+}
+
+function get_value(key) {
+    var value = null;
     var database = get_database();
-    var results = {};
-    if (database.ref('endorsements/' + user.id))
-        results =
-        database.ref('endorsements/' + user.id);
-    return results
+    database.ref(key).once("value")
+        .then(function(snapshot) {
+            value = snapshot.val();
+        });
+    return value;
+}
+
+function set_value(key, value) {
+    var database = get_database();
+    database.ref(key).set(value);
+}
+
+function del_value(key) {
+    var database = get_database();
+    database.ref(key).remove();    
 }
 
 // FNV-1a hashing function chosen based on: 
@@ -59,99 +73,115 @@ function process_datetime(timestamp) {
 //Invite a new user (anonmyous account until sign-up?)
 //TODO
 
-//Add endorsement to another user
-function add_endorsement(user_to, endorsement_text, post_time) {
-    var database = get_database();
-    var user_from = get_user();
-    var idx = idx_from_str(user_from.id+endorsement_text);
-    database.ref('pending/' + user_to.uid + '/' + idx).set({
-        text: endorsement_text,
-        from: user_from.uid,
-        time: post_time,
-        finalized: true
-    });
-}
-
-//Get all pending endorsements
-function get_pending() {
-    var database = get_database();
-    var user = get_user();
-    var results = {};
-    if (database.ref('pending/' + user))
-        results =
-        database.ref('pending/' + user);
-    return results
-}
-
 // Anaylze and add skills to user
 function get_skills(str) {
-    skills = str.split(' ').filter(function(word) {
-        return word[0] = '#';
-    });
+    skills = str.split(' ')
+        .filter(function(word) {
+            return word[0] = '#';
+        })
+        .map(function(word) { 
+            word.substring(1); 
+        });
     return skills;
 }
-function update_skills(user, endorsement) {
+
+// Logic to update user's skill multiplier
+function update_skills(uid_to, endorsement) {
     var database = get_database();
     var skills = get_skills(endorsement['text']);
     var scores = skills.map(function(skill) {
-        var v = database.ref('skills/' + user.uid + '/' + skill);
-        return v ? v : 0;
-    });
-    var user_from = endorsement['from'];
+            var v = get_value('skills/' + uid_to + '/' + skill);
+            return v ? v : 0;
+        });
+    var uid_from = endorsement['from'];
     var multipliers = skills.map(function(skill) {
-        var v = database.ref('skills/' + user_from.uid + '/' + skill);
-        return v ? v : 1;
-    });
+            var v = get_value('skills/' + uid_from + '/' + skill);
+            return v ? v : 1;
+        });
     for (var i = 0; i < skills.length; i++)
-        database.ref('skills/' + user.uid + '/' + skills[i]).set(scores[i]+multipliers[i]);
+        set_value('skills/' + uid_to + '/' + skills[i], scores[i]+multipliers[i]);
 }
 
-//Accept and endorsement
-function accept_pending(idx) {
+function add_user(user) {
+    if (get_value('users/' + user.uid) == null) {
+        set_value('users/' + user.uid, { 
+            name : user.displayName,
+            email : user.email
+        });
+    }
+}
+
+function get_user_from_uid(uid) {
+    return get_value('users/' + uid);
+}
+
+function get_user_relationships() {
+    return get_value('relationships/' + get_current_uid());
+}
+
+//Get all pending endorsements waiting on current user
+function get_pending() {
+    return get_value('pending/' + get_current_uid());
+}
+
+//Get endorsements (sort by data)
+function get_endorsements_by_user(uid) {
+    return get_value('endorsements/' + uid);
+}
+
+//Add endorsement to another user
+function add_endorsement(uid_to, endorsement_text, post_time) {
     var database = get_database();
-    var user = get_user();
+    var uid_from = get_current_uid();
+    var idx = idx_from_str(uid_from+endorsement_text);
+    set_value('pending/' + uid_to + '/' + idx, {
+        text: endorsement_text,
+        from: uid_from,
+        time: post_time,
+        to: uid_to // This is used to keep track of the final
+                   // approver, aka which user to move from 
+                   // 'pending' to 'endorsements' under
+    });
+}
+
+//Accept an endorsement
+function accept_pending(idx) {
+    var curr_uid = get_current_uid();
     // Get the endorsement we want to commit
-    var endr = database.ref('pending/' + user.uid + '/' + idx);
+    var endr = get_value('pending/' + curr_uid + '/' + idx);
     // Remove pending-only data
-    delete endr['finalized'];
+    uid_to = endr['to'];
+    delete endr['to']; // No longer necessary to track who it's originally from
+    
     // Commit to the public ledger of endorsements and remove it from pending
-    database.ref('endorsements/' + user.uid + '/' + idx).set(endr);
-    database.ref('pending/' + user.uid + '/' + idx).remove();
+    // NOTE: An approved amendment (by either party) or an accepted original
+    //       will move this from pending to permanent (public) endorsement
+    set_value('endorsements/' + uid_to + '/' + idx, endr);
+    del_value('pending/' + curr_uid + '/' + idx);
     // Update skills
-    update_skills(user, endr);
+    update_skills(uid_to, endr);
 }
 
 //Amend an endorsement
 function amend_pending(idx, updated_text) {
-    var database = get_database();
-    var user = get_user();
+    var curr_uid = get_current_uid();
     // Get the endorsement we want to commit
-    var endr = database.ref('pending/' + user.uid + '/' + idx);
-    // Rem
-    endr['finalized'] = false;
+    var endr = get_value('pending/' + curr_uid + '/' + idx);
     endr['text'] = updated_text;
-    // Commit to the public ledger of endorsements and remove it from pending
-    database.ref('pending/' + user.uid + '/' + idx).set(endr);
-}
-
-//Approve an amendment
-function approve_pending(user_to, idx) {
-    var database = get_database();
-    // Get the endorsement we want to commit
-    var endr = database.ref('pending/' + user_to.uid + '/' + idx);
-    // Remove pending-only data
-    delete endr['finalized'];
-    // Commit to the public ledger of endorsements and remove it from pending
-    database.ref('endorsements/' + user_to.uid + '/' + idx).set(endr);
-    database.ref('pending/' + user_to.uid + '/' + idx).remove();
-    // Update skills
-    update_skills(user_to, endr);
+    
+    // Toggle between who is approving to determine who gets it next
+    uid_to = endr['to'];
+    uid_from = endr['from'];
+    next_uid = (curr_uid == uid_to) ? uid_from : uid_to;
+    // Add to their queue
+    set_value('pending/' + next_uid + '/' + idx, endr);
+    // Remove from my queue
+    del_value('pending/' + uid + '/' + idx);
 }
 
 //Reject an endorsement
 function reject_pending(idx) {
-    var database = get_database();
-    var user = get_user();
-    // Get the endorsement we want to commit
-    database.ref('pending/' + user.uid + '/' + idx).remove();
+    var uid = get_current_uid();
+    // Completely remove from the database
+    del_value('pending/' + uid + '/' + idx);
 }
