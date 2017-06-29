@@ -10,19 +10,27 @@ function get_current_uid() {
     return get_user().uid;
 }
 
-function get_value(key) {
-    var value = null;
+function get_value(key, value_callback) {
     var database = get_database();
     database.ref(key).once("value")
         .then(function(snapshot) {
-            value = snapshot.val();
+            //alert('Value for key "' + key +'":\n\n' + JSON.stringify(snapshot.val()));
+            value_callback(snapshot.val());
         });
-    return value;
 }
 
 function set_value(key, value) {
     var database = get_database();
     database.ref(key).set(value);
+}
+
+function add_value(key, value) {
+    var database = get_database();
+    database.ref(key).transaction(function(current_value) {
+        if (!current_value) 
+            current_value = 0;
+        return current_value + value;
+    });
 }
 
 function del_value(key) {
@@ -74,7 +82,7 @@ function process_datetime(timestamp) {
 //TODO
 
 // Anaylze and add skills to user
-function get_skills(str) {
+function get_skills_from_endr(str) {
     skills = str.split(' ')
         .filter(function(word) {
             return word[0] = '#';
@@ -87,46 +95,51 @@ function get_skills(str) {
 
 // Logic to update user's skill multiplier
 function update_skills(uid_to, endorsement) {
-    var database = get_database();
-    var skills = get_skills(endorsement['text']);
-    var scores = skills.map(function(skill) {
-            var v = get_value('skills/' + uid_to + '/' + skill);
-            return v ? v : 0;
-        });
+    var skills = get_skills_from_endr(endorsement['text']);
     var uid_from = endorsement['from'];
-    var multipliers = skills.map(function(skill) {
-            var v = get_value('skills/' + uid_from + '/' + skill);
-            return v ? v : 1;
-        });
-    for (var i = 0; i < skills.length; i++)
-        set_value('skills/' + uid_to + '/' + skills[i], scores[i]+multipliers[i]);
+    
+    // Add the log of the amount of skill the giver has to the receiver
+    skills.map(function(skill) {
+        get_value('skills/' + uid_from + '/' + skill, 
+            function(user_from_skill_pts) {
+                if (!user_from_skill_pts)
+                     user_from_skill_pts = 1;
+                var skill_pts = Math.log(user_from_skill_pts);
+                skill_pts = skill_pts / Math.log(10); // Tune this number
+                skill_pts = Math.ceil(skill_pts); // Always at least 1 skill gained
+                add_value('skills/' + uid_to + '/' + skill, skill_pts);
+            });
+    });
 }
 
-function add_user(user) {
-    if (get_value('users/' + user.uid) == null) {
-        set_value('users/' + user.uid, { 
-            name : user.displayName,
-            email : user.email
-        });
-    }
+function get_user_from_uid(uid, update_func) {
+    get_value('users/' + uid, update_func);
 }
 
-function get_user_from_uid(uid) {
-    return get_value('users/' + uid);
-}
-
-function get_user_relationships() {
-    return get_value('relationships/' + get_current_uid());
+function get_user_relationships(update_func) {
+    get_value('relationships/' + get_current_uid(), update_func);
 }
 
 //Get all pending endorsements waiting on current user
-function get_pending() {
-    return get_value('pending/' + get_current_uid());
+function get_pending(update_func) {
+    get_value('pending/' + get_current_uid(), update_func);
 }
 
 //Get endorsements (sort by data)
-function get_endorsements_by_user(uid) {
-    return get_value('endorsements/' + uid);
+function get_endorsements_by_user(uid, update_func) {
+    get_value('endorsements/' + uid, update_func);
+}
+
+// User registration (on first login)
+function add_user(user) {
+    get_value('users/' + user.uid, function(value) {
+        if (value == null) {
+            set_value('users/' + user.uid, { 
+                name : user.displayName,
+                email : user.email
+            });
+        }
+    });
 }
 
 //Add endorsement to another user
@@ -148,35 +161,39 @@ function add_endorsement(uid_to, endorsement_text, post_time) {
 function accept_pending(idx) {
     var curr_uid = get_current_uid();
     // Get the endorsement we want to commit
-    var endr = get_value('pending/' + curr_uid + '/' + idx);
-    // Remove pending-only data
-    uid_to = endr['to'];
-    delete endr['to']; // No longer necessary to track who it's originally from
-    
-    // Commit to the public ledger of endorsements and remove it from pending
-    // NOTE: An approved amendment (by either party) or an accepted original
-    //       will move this from pending to permanent (public) endorsement
-    set_value('endorsements/' + uid_to + '/' + idx, endr);
-    del_value('pending/' + curr_uid + '/' + idx);
-    // Update skills
-    update_skills(uid_to, endr);
+    get_value('pending/' + curr_uid + '/' + idx,
+        function(endr) {
+            // Remove pending-only data
+            uid_to = endr['to'];
+            delete endr['to']; // No longer necessary to track who it's originally from
+            
+            // Commit to the public ledger of endorsements and remove it from pending
+            // NOTE: An approved amendment (by either party) or an accepted original
+            //       will move this from pending to permanent (public) endorsement
+            set_value('endorsements/' + uid_to + '/' + idx, endr);
+            del_value('pending/' + curr_uid + '/' + idx);
+            // Update skills
+            update_skills(uid_to, endr);
+        });
 }
 
 //Amend an endorsement
 function amend_pending(idx, updated_text) {
     var curr_uid = get_current_uid();
     // Get the endorsement we want to commit
-    var endr = get_value('pending/' + curr_uid + '/' + idx);
-    endr['text'] = updated_text;
-    
-    // Toggle between who is approving to determine who gets it next
-    uid_to = endr['to'];
-    uid_from = endr['from'];
-    next_uid = (curr_uid == uid_to) ? uid_from : uid_to;
-    // Add to their queue
-    set_value('pending/' + next_uid + '/' + idx, endr);
-    // Remove from my queue
-    del_value('pending/' + uid + '/' + idx);
+    get_value('pending/' + curr_uid + '/' + idx,
+        function(endr) {
+            endr['text'] = updated_text;
+            
+            // Toggle between who is approving to determine who gets it next
+            uid_to = endr['to'];
+            uid_from = endr['from'];
+            next_uid = (curr_uid == uid_to) ? uid_from : uid_to;
+            // Add to their queue
+            set_value('pending/' + next_uid + '/' + idx, endr);
+            // Remove from my queue
+            del_value('pending/' + uid + '/' + idx);
+        });
 }
 
 //Reject an endorsement

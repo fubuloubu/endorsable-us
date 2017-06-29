@@ -9,30 +9,37 @@ Why: <textarea id="endorsement" style="width: 480px; height: 40px"></textarea><b
 </div>
 <script>
 function setupUsernameSelector() {
-    var input = document.getElementById("user-name");
-    var friend_list = get_user_relationships();
-    var friend_names = [];
-    if (friend_list)
-        friend_names = friend_list
-            .map(function(uid, relationship) {
-                return get_user_from_uid(uid).name;
+    get_user_relationships(function(relationship_list) {
+        alert(JSON.stringify(relationship_list));
+        //relationship_list.resolve(function(relationship_list) {
+            var nicknames = relationship_list
+                .map(function(user) {
+                    return user.nickname;
+                });
+            alert(JSON.stringify(nicknames));
+            
+            var input = document.getElementById("user-name");
+            new Awesomplete(input, {
+                minChars: 3,
+                maxItems: 15,
+                list: nicknames,
+                replace: function (text) {
+                            // Do default function
+                            this.input.value = text;
+                            // Also set hidden input with selected uid
+                            var choice = relationship_list
+                                .filter(function(uid, user) {
+                                    return user.nickname == text;
+                                })
+                                .map(function(uid, user) {
+                                    return uid;
+                                });
+                            // Only update if the choice made was in the list provided
+                            if (choice.length == 1)
+                                document.getElementById("user-id").value = choice[0];
+                         }
             });
-    
-    new Awesomplete(input, {
-        minChars: 3,
-        maxItems: 15,
-        list: friend_names,
-        replace: function (text) {
-                    // Do default function
-                    this.input.value = text;
-                    // Also set hidden input with selected uid
-                    var choice = friend_list.filter(function(uid, relationship) {
-                            get_user_from_uid(uid).name == text;
-                        });
-                    // Only update if the choice made was in the list provided
-                    if (choice.length == 1)
-                        document.getElementById("user-id").value = choice[0];
-                 }
+        //});
     });
 }
 
