@@ -2,35 +2,11 @@
 layout: logged-in
 permalink: /
 ---
-<div class="endorsement-editor">
-Who: <input type="text" id="user-name" onkeyup=validateUserName()><br>
-Why: <textarea id="endorsement" style="width: 480px; height: 40px"></textarea><br>
-     <button type="submit" onclick=processEndorsement()>Submit</button>
-</div>
+{% include endorsement-editor.html %}
 <script>
 function after_user_auth() {
-    // construct friend lists
+    // initialize endorsement editor user picklists
+    setupUsernameSelector();
     // populate endorsement timeline via friend lists (sorted by time)
-}
-
-function validateUserName() {
-    //if (this.value.length > 3) {
-    //    assert('Here!');
-        // provide a list of friends that match
-        // also provide a "not listed" option
-    //}
-}
-
-function processEndorsement() {
-    // process for bad stuff
-    var endorsement_text = document.getElementById('endorsement').value;
-    // check if user exists (and invite them if not)
-    var user_name = document.getElementById('user-name').value;
-    var user = {uid:'RGFBNjHJHGFFHJ883450354'}; // TODO: Look up real user.id
-    // get data
-    var processed_datetime = process_datetime();
-    // add the endorsement
-    add_endorsement(user, endorsement_text, processed_datetime);
-    // refresh the list of endorsements
 }
 </script>

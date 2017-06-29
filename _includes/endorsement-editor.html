@@ -1,0 +1,53 @@
+<!-- Endorsement Editor -->
+<script src="https://rawgit.com/LeaVerou/awesomplete/gh-pages/awesomplete.min.js"></script>
+<link rel="stylesheet" href="https://rawgit.com/LeaVerou/awesomplete/gh-pages/awesomplete.css" />
+<div class="endorsement-editor">
+Who: <input id="user-name" style="width: 480px;"><br>
+     <input id="user-id"   type="hidden">
+Why: <textarea id="endorsement" style="width: 480px; height: 40px"></textarea><br>
+     <button type="submit" onclick=processEndorsement()>Submit</button>
+</div>
+<script>
+function setupUsernameSelector() {
+    var input = document.getElementById("user-name");
+    var friend_list = get_user_relationships();
+    var friend_names = [];
+    if (friend_list)
+        friend_names = friend_list
+            .map(function(uid, relationship) {
+                return get_user_from_uid(uid).name;
+            });
+    
+    new Awesomplete(input, {
+        minChars: 3,
+        maxItems: 15,
+        list: friend_names,
+        replace: function (text) {
+                    // Do default function
+                    this.input.value = text;
+                    // Also set hidden input with selected uid
+                    var choice = friend_list.filter(function(uid, relationship) {
+                            get_user_from_uid(uid).name == text;
+                        });
+                    // Only update if the choice made was in the list provided
+                    if (choice.length == 1)
+                        document.getElementById("user-id").value = choice[0];
+                 }
+    });
+}
+
+function processEndorsement() {
+    // process for bad stuff
+    var endorsement_text = document.getElementById('endorsement').value;
+    // check if user exists (and invite them if not)
+    var uid_to = document.getElementById('user-id').value;
+    if (!uid_to)
+        uid_to = null // get anonymous (temporary) id, 
+                      // have user enter in contact details on the next page
+    endorsement_text = endorsement_text; // TODO: Check for bad stuff
+    var processed_datetime = process_datetime(); // TODO: Allow past endorsements
+    // add the endorsement
+    add_endorsement(uid_to, endorsement_text, processed_datetime);
+}
+</script>
+<!-- Endorsement Editor -->
