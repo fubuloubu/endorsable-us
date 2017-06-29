@@ -10,13 +10,13 @@ Why: <textarea id="endorsement" style="width: 480px; height: 40px"></textarea><b
 <script>
 function setupUsernameSelector() {
     get_user_relationships(function(relationship_list) {
-        alert(JSON.stringify(relationship_list));
+        //alert(JSON.stringify(relationship_list));
         //relationship_list.resolve(function(relationship_list) {
             var nicknames = relationship_list
                 .map(function(user) {
                     return user.nickname;
                 });
-            alert(JSON.stringify(nicknames));
+            //alert(JSON.stringify(nicknames));
             
             var input = document.getElementById("user-name");
             new Awesomplete(input, {
