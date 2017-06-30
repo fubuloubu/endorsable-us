@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>{% block title %}endorsable.us{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block head %}
     {% endblock %}
   </head>
@@ -11,6 +13,9 @@
       {% if g.curr_uid is defined %}
         <a class="page-link" id="profile"  href="{{ url_for('user', **g.curr_uid) }}">My Profile</a>
         <a class="page-link" id="sign-out" href="{{ url_for('login') }}">Log Out</a>
+      {% else %}
+        <a class="page-link" href="{{ url_for('signup') }}">Signup</a>
+        <a class="page-link" href="{{ url_for('login') }}">Login</a>
       {% endif %}
     </div>
     <div class="wrapper" id="content">

@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Please login</h1>
+  <h1>Please Signup</h1>
   <br>
   <form action="" method="post">
+    <input type="text" placeholder="Full Name" name="fullname" value="{{ request.form.fullname }}">
+    <br>
     <input type="text" placeholder="Email" name="username" value="{{ request.form.email }}">
     <br>
     <input type="password" placeholder="Password" name="password" value="{{ request.form.password }}">

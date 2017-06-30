@@ -1,25 +1,66 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for, request
 app = Flask(__name__)
 
-@app.route("/login")
+def add_user(formdata):
+    #user = auth.sign_in_with_email_and_password(formdata.email, formdata.password)
+    # Add email and fullname to our database under /users
+    return False # If account has already been added
+
+def validate(formdata):
+    #user = auth.sign_in_with_email_and_password(formdata.email, formdata.password)
+    return False # If account is not in system
+
+def user_logged_in():
+    return False
+
+def create_link(routename, linktext):
+    return '<a href="' + url_for(routename) +'">' + linktext + '</a>'
+
+@app.route("/signup", methods=['GET', 'POST'])
+def signup():
+    error = None
+    if request.method == 'POST':
+        if add_user(request.form):
+            return redirect(url_for('timeline'))
+        else:
+            error = 'The email you provided is already in use' + \
+                    '<br><br>You can login ' + create_link('login', 'here')
+    return render_template('signup.html', error=error)
+
+@app.route("/login", methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    error = None
+    if request.method == 'POST':
+        if validate(request.form):
+            return redirect(url_for('timeline'))
+        else:
+            error = 'Your password is incorrect or you are not registered in the system' + \
+                    '<br><br>You can sign-up ' + create_link('signup', 'here')
+    return render_template('login.html', error=error)
 
 @app.route("/")
 @app.route("/timeline")
 def timeline():
+    if not user_logged_in():
+       return redirect(url_for('login'))
     return render_template('timeline.html')
 
 @app.route("/user/<uid>")
 def user(uid):
+    if not user_logged_in():
+       return redirect(url_for('login'))
     return render_template('user.html')
 
 @app.route("/pending")
 def pending():
+    if not user_logged_in():
+       return redirect(url_for('login'))
     return render_template('pending.html')
 
 @app.route("/invite")
 def invite():
+    if not user_logged_in():
+       return redirect(url_for('login'))
     return render_template('invite.html')
 
 @app.route("/about")
