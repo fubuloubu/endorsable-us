@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+    {% endblock %}
+  </head>
+  <body>
+    <div class="wrapper" id="header">
+      <a class="page-link" id="logo" href="{{ url_for('timeline') }}">Logo</a>
+      <div class="horizontal-fill"></div>
+      {% if g.curr_uid is defined %}
+        <a class="page-link" id="profile"  href="{{ url_for('user', **g.curr_uid) }}">My Profile</a>
+        <a class="page-link" id="sign-out" href="{{ url_for('login') }}">Log Out</a>
+      {% endif %}
+    </div>
+    <div class="wrapper" id="content">
+      {% block content %}
+      {% endblock %}
+    </div>
+    <div class="wrapper" id="footer">
+      <div class="horizontal-fill"></div>
+      <a class="page-link" href="{{ url_for('about') }}">About</a>
+      <a class="page-link" href="{{ url_for('tos') }}">Terms of Service</a>
+    </div>
+  </body>
+</html>
