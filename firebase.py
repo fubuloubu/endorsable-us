@@ -120,16 +120,16 @@ class User(object):
         self._push_db_data('pending/' + uid_to, endorsement)
 
     def accept_pending(self, pending_uid):
-        endorsement = self._pop_db_data('pending/' + self.get_uid() + '/' + endorsement_uid)
+        endorsement = self._pop_db_data('pending/' + self.get_uid() + '/' + pending_uid)
         uid_to = endorsement['to']
         del endorsement['to']
         self._push_db_data('endorsements/' + uid_to, endorsement)
 
     def amend_pending(self, pending_uid, updated_text):
-        endorsement = self._pop_db_data('pending/' + self.get_uid() + '/' + endorsement_uid)
-        uid_to = endorsement['to']
+        endorsement = self._pop_db_data('pending/' + self.get_uid() + '/' + pending_uid)
         endorsement['text'] = updated_text
-        self._push_db_data('pending/' + uid_to, endorsement)
+        next_uid = endorsement['from'] if endorsement['to'] == self.get_uid() else endorsement['to']
+        self._push_db_data('pending/' + next_uid, endorsement)
 
     def reject_pending(self, pending_uid):
-        self._pop_db_data('pending/' + self.get_uid() + '/' + endorsement_uid)
+        self._pop_db_data('pending/' + self.get_uid() + '/' + pending_uid)
