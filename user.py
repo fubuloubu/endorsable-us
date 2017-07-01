@@ -12,11 +12,9 @@ class User(Database):
         userdata['uid'] = user_uid
         relationships = self.get_relationships_by_uid(user_uid)
         if relationships:
-            def userdata_from_relationship(r):
-                userdata = {}
-                userdata['type'] = r.val()
-                userdata['name'] = self._get_db_data('users/' + r.key() + '/name')
-            userdata['relationships'] = map(userdata_from_relationship, relationships)
+            userdata['relationships'] = \
+                [ {'name': self._get_db_data('users/' + key + '/name'), 'type' : val} \
+                    for key, val in relationships.items() ]
         return userdata
 
     def add_relationship(self, friend_uid, relationship='friend'):
