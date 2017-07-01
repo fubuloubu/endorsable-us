@@ -3,6 +3,9 @@ from database import Database
 class User(Database):
     def __init__(self):
         Database.__init__(self)
+    
+    def get_user_name(self, user_uid):
+        return self._get_db_data('users/' + user_uid + '/name')
 
     def get_user_data(self, user_uid):
         userdata = self._get_db_data('users/' + user_uid)
@@ -10,11 +13,12 @@ class User(Database):
         if self.get_uid() != user_uid:
             del userdata['email']
         userdata['uid'] = user_uid
-        relationships = self.get_relationships_by_uid(user_uid)
-        if relationships:
-            userdata['relationships'] = \
-                [ {'name': self._get_db_data('users/' + key + '/name'), 'type' : val} \
-                    for key, val in relationships.items() ]
+        friends = self.get_relationships_by_uid(user_uid)
+        if friends: # User has friends
+            #Add name from key, change value to type
+            for friend in friends:
+                friend['name'] = self.get_user_name(friend['uid'])
+            userdata['relationships'] = friends
         return userdata
 
     def add_relationship(self, friend_uid, relationship='friend'):
@@ -25,13 +29,18 @@ class User(Database):
                 '/' + self.get_uid(), relationship)
 
     def get_relationships_by_uid(self, user_uid):
-        return self._get_db_data('relationships/' + user_uid)
+        return self._get_db_array('relationships/' + user_uid, valname='type', keyname='uid')
 
     def get_user_relationships(self):
         return self.get_relationships_by_uid(self.get_uid())
 
     def get_endorsements_by_uid(self, user_uid):
-        return self._get_db_array('endorsements/' + user_uid)
+        endorsements = self._get_db_array('endorsements/' + user_uid)
+        user_name = self.get_user_name(user_uid)
+        for endr in endorsements:
+            endr['toname'] = user_name
+            endr['fromname'] = self.get_user_name(endr['from'])
+        return endorsements
 
     def get_user_endorsements(self):
         return self.get_endorsements_by_uid(self.get_uid())
@@ -42,8 +51,8 @@ class User(Database):
         endorsements.extend(self.get_user_endorsements())
         friends = self.get_user_relationships()
         if friends: # User has friends
-            for uid in friends.keys():
-                endorsements.extend(self.get_endorsements_by_uid(uid))
+            for friend in friends:
+                endorsements.extend(self.get_endorsements_by_uid(friend['uid']))
         return endorsements
 
     def get_pending_endorsements(self):
