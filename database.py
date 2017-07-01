@@ -52,8 +52,12 @@ class Database(object):
     def _get_db_array(self, key):
         array = self._get_db_data(key)
         if array:
-            array = map(lambda e: e.val(), array)
-        return array
+            # Actually OrderedDict, a list of tuples basically
+            # so we are going to convert back to a list of dicts
+            array = map(lambda e: e[1], array)
+            return array
+        else:
+            return []
         
     def get_uid(self):
         if self._uid is not None:
