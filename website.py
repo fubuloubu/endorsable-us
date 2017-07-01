@@ -58,6 +58,7 @@ def pending():
        return redirect(url_for('login'))
     pagedata = {}
     pagedata['user_uid'] = webuser.get_uid()
+    pagedata['pending_endorsements'] = webuser.get_pending_endorsements()
     return render_template('pending.html', **pagedata)
 
 @app.route("/invite")
