@@ -18,10 +18,16 @@ class User(object):
         self._refresh_token = None
     
     def _set_auth_data(self, user):
-        self._uid = user['localId']
-        self._id_token = user['idToken']
-        self._refresh_token = user['refreshToken']
-        self._timeout = user['expiresIn']
+        if user:
+            self._uid = user['localId']
+            self._id_token = user['idToken']
+            self._refresh_token = user['refreshToken']
+            self._timeout = user['expiresIn']
+        else:
+            self._uid = None
+            self._id_token = None
+            self._refresh_token = None
+            self._timeout = None
         
     def _get_db_data(self, key):
         return self._db.child(key).get(self._id_token).val()
@@ -58,6 +64,9 @@ class User(object):
             #'Your password is incorrect or you are not registered in the system' + \
             #        '<br><br>You can register ' + create_link('register', 'here')
             return error # Login unsuccessful
+
+    def logout(self):
+        self._set_auth_data(None)
 
     def register(self, fullname, email, password):
         try:
