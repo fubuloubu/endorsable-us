@@ -1,0 +1,10 @@
+{% if userdata.relationships %}
+  <ul id="relationship_list">
+    {% for relationship in userdata.relationships %}
+      <li class="relationship">
+        <div class="relationship-name" >{{ relationship.name  }}</div>
+        <div class="relationship-type" >{{ relationship.type  }}</div>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

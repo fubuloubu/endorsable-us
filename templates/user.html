@@ -4,6 +4,7 @@
     {% if userdata is defined %}
       <div id="fullname">{{ userdata.name }}</div>
       <div id="email">{{ userdata.email }}</div>
+      {% include "relationships.html" %}
       {% if userdata.uid != user_uid %}
         <div id="add-friend">Add Friend</div>
       {% endif %}
