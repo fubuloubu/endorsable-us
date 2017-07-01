@@ -49,13 +49,21 @@ class Database(object):
         self._del_db_data(key)
         return data
     
-    def _get_db_array(self, key):
-        array = self._get_db_data(key)
-        if array:
+    def _get_db_array(self, key, keyname='key', valname='val'):
+        ordered_dict = self._get_db_data(key)
+        if ordered_dict:
             # Actually OrderedDict, a list of tuples basically
             # so we are going to convert back to a list of dicts
-            array = map(lambda e: e[1], array)
-            return array
+            def od_to_dict(key, val):
+                if isinstance(val, dict):
+                    obj = val.copy()
+                else:
+                    obj = {}
+                    obj[valname] = val
+                obj[keyname] = key
+                return obj
+            ordered_dict = [ od_to_dict(key, val) for key, val in ordered_dict.items() ]
+            return ordered_dict
         else:
             return []
         
