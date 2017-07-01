@@ -55,30 +55,37 @@ class Database(object):
         return ''
         
     # Perform a login
-    def login(self, email, password):
+    def login(self, formdata):
         try:
+            email = formdata['email']
+            password = formdata['password']
             user = self._auth.sign_in_with_email_and_password(email, password)
             self._set_auth_data(user)
             return None if self.authenticated() else 'Not sure what happened here...'
         except request_exceptions.HTTPError as error:
-            #'Your password is incorrect or you are not registered in the system' + \
-            #        '<br><br>You can register ' + create_link('register', 'here')
+            if error.errno.response.status_code == 400: # EMAIL_NOT_FOUND, BAD_EMAIL, ...
+                error = '''Your email or password is incorrect.
+                    Please try again, or register through the registration page.'''
             return error # Login unsuccessful
 
     def logout(self):
         self._set_auth_data(None)
 
-    def register(self, fullname, email, password):
+    def register(self, formdata):
         try:
+            fullname = formdata['fullname']
+            email = formdata['email']
+            password = formdata['password']
             user = self._auth.create_user_with_email_and_password(email, password)
             self._set_auth_data(user)
             # Add user data to our db
             userdata = {"email": email, "name": fullname}
-            self._set_db_data('users', {self.get_uid() : userdata})
+            self._set_db_data('users/' + self.get_uid(), userdata)
             return None if self.authenticated() else 'Not sure what happened here...'
         except request_exceptions.HTTPError as error:
-            #'The email you provided is already in use' + \
-            #        '<br><br>You can login ' + create_link('login', 'here')
+            if error.errno.response.status_code == 400: # EMAIL_EXISTS, BAD_EMAIL, ...
+                error = '''The email you provided is badly formed or already in use. 
+                You should use the login page to login if you already have an account.'''
             return error # Registration unsuccessful
 
     def _refresh_session(self):

@@ -1,10 +1,10 @@
 from flask import Flask, render_template, redirect, url_for, request
 app = Flask(__name__)
 
-from flask_debugtoolbar import DebugToolbarExtension
-app.config['SECRET_KEY'] = 'Temporary Secret Key. Update for Prod.'
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-toolbar = DebugToolbarExtension(app)
+#from flask_debugtoolbar import DebugToolbarExtension
+#app.config['SECRET_KEY'] = 'Temporary Secret Key. Update for Prod.'
+#app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+#toolbar = DebugToolbarExtension(app)
 
 from user import User
 webuser = User()
@@ -32,7 +32,7 @@ def logged_out_only(f):
 def register():
     error = None
     if request.method == 'POST':
-        error = webuser.register(**request.form)
+        error = webuser.register(request.form)
         if not error:
             return redirect(url_for('timeline'))
     return render_template('register.html', error=error)
@@ -42,7 +42,7 @@ def register():
 def login():
     error = None
     if request.method == 'POST':
-        error = webuser.login(**request.form)
+        error = webuser.login(request.form)
         if not error:
             return redirect(url_for('timeline'))
     return render_template('login.html', error=error)
@@ -62,7 +62,9 @@ def user(uid):
     pagedata = {}
     pagedata['user_uid'] = webuser.get_uid()
     pagedata['userdata'] = webuser.get_user_data(uid)
-    pagedata['filtered_endorsements'] = webuser.get_endorsements_by_uid(uid)
+    endrs = webuser.get_endorsements_by_uid(uid)
+    #if endrs:
+    pagedata['filtered_endorsements'] = endrs
     return render_template('user.html', **pagedata)
 
 @app.route("/pending")
