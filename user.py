@@ -5,13 +5,29 @@ class User(Database):
         Database.__init__(self)
 
     def get_user_data(self, user_uid):
-        return self._get_db_data('users/' + user_uid)
+        userdata = self._get_db_data('users/' + user_uid)
+        userdata['uid'] = user_uid
+        relationships = self.get_relationships_by_uid(user_uid)
+        if relationships:
+            def userdata_from_relationship(r):
+                userdata = {}
+                userdata['type'] = r.val()
+                userdata['name'] = self._get_db_data('users/' + r.key() + '/name')
+            userdata['relationships'] = map(userdata_from_relationship, relationships)
+        return userdata
+
+    def add_relationship(self, friend_uid, relationship='friend'):
+        self._set_db_data('relationships/' + self.get_uid() + \
+                '/' + friend_uid, relationship)
+
+    def get_relationships_by_uid(self, user_uid):
+        return self._get_db_data('relationships/' + user_uid)
 
     def get_user_relationships(self):
-        return self._get_db_data('relationships/' + self.get_uid())
+        return self.get_relationships_by_uid(self.get_uid())
 
     def get_endorsements_by_uid(self, user_uid):
-        return self._get_db_data('endorsements/' + user_uid)
+        return self._get_db_array('endorsements/' + user_uid)
 
     def get_all_endorsements(self):
         endorsements = []
@@ -36,19 +52,19 @@ class User(Database):
                              # final approver, aka which user can
                              # publish the endorsement
         }
-        self._push_db_data('pending/' + uid_to, endorsement)
+        self._push_db_array('pending/' + uid_to, endorsement)
 
     def accept_pending(self, pending_uid):
-        endorsement = self._pop_db_data('pending/' + self.get_uid() + '/' + pending_uid)
+        endorsement = self._pop_db_array('pending/' + self.get_uid() + '/' + pending_uid)
         uid_to = endorsement['to']
         del endorsement['to']
-        self._push_db_data('endorsements/' + uid_to, endorsement)
+        self._push_db_array('endorsements/' + uid_to, endorsement)
 
     def amend_pending(self, pending_uid, updated_text):
-        endorsement = self._pop_db_data('pending/' + self.get_uid() + '/' + pending_uid)
+        endorsement = self._pop_db_array('pending/' + self.get_uid() + '/' + pending_uid)
         endorsement['text'] = updated_text
         next_uid = endorsement['from'] if endorsement['to'] == self.get_uid() else endorsement['to']
-        self._push_db_data('pending/' + next_uid, endorsement)
+        self._push_db_array('pending/' + next_uid, endorsement)
 
     def reject_pending(self, pending_uid):
-        self._pop_db_data('pending/' + self.get_uid() + '/' + pending_uid)
+        self._pop_db_array('pending/' + self.get_uid() + '/' + pending_uid)
