@@ -6,7 +6,7 @@ app.config['SECRET_KEY'] = 'Temporary Secret Key. Update for Prod.'
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 toolbar = DebugToolbarExtension(app)
 
-from firebase import User
+from user import User
 webuser = User()
 from functools import wraps
 # This decorator redirects user to login
