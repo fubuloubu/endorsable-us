@@ -54,7 +54,7 @@ def login():
 def timeline():
     pagedata = {}
     pagedata['user_uid'] = webuser.get_uid()
-    pagedata['filtered_endorsements'] = webuser.get_all_endorsements()
+    pagedata['filtered_endorsements'] = webuser.get_timeline_endorsements()
     return render_template('timeline.html', **pagedata)
 
 @app.route("/user/<uid>")
@@ -63,9 +63,7 @@ def user(uid):
     pagedata = {}
     pagedata['user_uid'] = webuser.get_uid()
     pagedata['userdata'] = webuser.get_user_data(uid)
-    endrs = webuser.get_endorsements_by_uid(uid)
-    #if endrs:
-    pagedata['filtered_endorsements'] = endrs
+    pagedata['filtered_endorsements'] = webuser.get_user_endorsements(uid)
     return render_template('user.html', **pagedata)
 
 @app.route("/pending")
