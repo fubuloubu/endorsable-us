@@ -1,7 +1,14 @@
 {% extends "endorsement-editor.html" %}
+{% if endr is defined %}
+  {% block fields %}
+  <div class="to-field">{{ endr.to }}</div>
+  <div class="time-field">{{ endr.time }}</div>
+  <div class="text-field" value="{{ endr.text }}"></div>
+  {% endblock %}
   {% block extra %}
     <div>
       <div>Amend</div>
       <div>Cancel</div>
     </div>
   {% endblock %}
+{% endif %}
