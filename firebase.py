@@ -94,6 +94,14 @@ class User(object):
     def get_endorsements_by_uid(self, user_uid):
         return self._get_db_data('endorsements/' + user_uid)
 
+    def get_all_endorsements(self):
+        endorsements = []
+        friends = self.get_user_relationships()
+        if friends: # User has friends
+            for uid in friends.keys():
+                endorsements.extend(self.get_endorsements_by_uid(uid))
+        return endorsements
+
     def get_user_endorsements(self):
         return self.get_endorsements_by_uid(self.get_uid())
 
