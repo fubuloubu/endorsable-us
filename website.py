@@ -6,31 +6,24 @@ app.config['SECRET_KEY'] = 'Temporary Secret Key. Update for Prod.'
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 toolbar = DebugToolbarExtension(app)
 
-def create_link(route, text):
-    return text
-
 from firebase import User
 webuser = User()
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     error = None
     if request.method == 'POST':
-        if webuser.register(request.form['fullname'], request.form['email'], request.form['password']):
+        error = webuser.register(request.form['fullname'], request.form['email'], request.form['password'])
+        if not error:
             return redirect(url_for('timeline'))
-        else:
-            error = 'The email you provided is already in use' + \
-                    '<br><br>You can login ' + create_link('login', 'here')
     return render_template('register.html', error=error)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
-        if webuser.login(request.form['email'], request.form['password']):
+        error = webuser.login(request.form['email'], request.form['password'])
+        if not error:
             return redirect(url_for('timeline'))
-        else:
-            error = 'Your password is incorrect or you are not registered in the system' + \
-                    '<br><br>You can register ' + create_link('register', 'here')
     return render_template('login.html', error=error)
 
 @app.route("/")
@@ -44,7 +37,8 @@ def timeline():
 def user(uid):
     if not webuser.authenticated():
        return redirect(url_for('login'))
-    return render_template('user.html')
+    userdata = webuser.get_user_data(uid)
+    return render_template('user.html', userdata=userdata)
 
 @app.route("/pending")
 def pending():
