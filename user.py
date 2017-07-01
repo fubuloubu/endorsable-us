@@ -6,6 +6,9 @@ class User(Database):
 
     def get_user_data(self, user_uid):
         userdata = self._get_db_data('users/' + user_uid)
+        # Don't give out contact information
+        if self.get_uid() != user_uid:
+            del userdata['email']
         userdata['uid'] = user_uid
         relationships = self.get_relationships_by_uid(user_uid)
         if relationships:
@@ -17,8 +20,11 @@ class User(Database):
         return userdata
 
     def add_relationship(self, friend_uid, relationship='friend'):
+        # Dual pointer relationship
         self._set_db_data('relationships/' + self.get_uid() + \
                 '/' + friend_uid, relationship)
+        self._set_db_data('relationships/' + friend_uid + \
+                '/' + self.get_uid(), relationship)
 
     def get_relationships_by_uid(self, user_uid):
         return self._get_db_data('relationships/' + user_uid)
@@ -29,16 +35,18 @@ class User(Database):
     def get_endorsements_by_uid(self, user_uid):
         return self._get_db_array('endorsements/' + user_uid)
 
+    def get_user_endorsements(self):
+        return self.get_endorsements_by_uid(self.get_uid())
+
     def get_all_endorsements(self):
+        # User + Friends
         endorsements = []
+        endorsements.extend(self.get_user_endorsements())
         friends = self.get_user_relationships()
         if friends: # User has friends
             for uid in friends.keys():
                 endorsements.extend(self.get_endorsements_by_uid(uid))
         return endorsements
-
-    def get_user_endorsements(self):
-        return self.get_endorsements_by_uid(self.get_uid())
 
     def get_pending_endorsements(self):
         return self._get_db_data('pending/' + self.get_uid())
