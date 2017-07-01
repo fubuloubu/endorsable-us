@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-{# Other stuff #}
-  {% include "endorsement-editor.html" %}
-  {% include "endorsements-view.html" %}
+  {% if userdata is defined %}
+    <div class="column">
+      <div id="fullname">{{ userdata.name }}</div>
+      <div id="email">{{ userdata.email }}</div>
+    </div>
+  {% endif %}
+  <div class="column">
+    {% include "endorsement-editor.html" %}
+    {% include "endorsements-view.html" %}
+  <div class="column">
 {% endblock %}
