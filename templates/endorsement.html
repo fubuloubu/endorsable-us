@@ -1,8 +1,10 @@
 {% if endr is defined %}
-<div>
+<div class="endorsement">
   <div>{{ endr.from }}</div>
   <div>{{ endr.to }}</div>
   <div>{{ endr.time }}</div>
   <div>{{ endr.text }}</div>
+  {% block extra %}
+  {% endblock %}
 </div>
 {% endif %}
