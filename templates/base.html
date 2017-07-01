@@ -14,7 +14,7 @@
         <a class="page-link" id="profile"  href="{{ url_for('user', webuser.get_uid()) }}">My Profile</a>
         <a class="page-link" id="sign-out" href="{{ url_for('login') }}">Log Out</a>
       {% else %}
-        <a class="page-link" href="{{ url_for('register') }}">Signup</a>
+        <a class="page-link" href="{{ url_for('register') }}">Register</a>
         <a class="page-link" href="{{ url_for('login') }}">Login</a>
       {% endif %}
     </div>
