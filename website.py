@@ -8,44 +8,57 @@ toolbar = DebugToolbarExtension(app)
 
 from firebase import User
 webuser = User()
+from functools import wraps
+# This decorator redirects user to login
+def logged_in_only(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not webuser.authenticated():
+           return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# This decorator redirects user to the timeline
+def logged_out_only(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if webuser.authenticated():
+           return redirect(url_for('timeline'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.route("/register", methods=['GET', 'POST'])
+@logged_out_only
 def register():
     error = None
     if request.method == 'POST':
-        error = webuser.register(request.form['fullname'], request.form['email'], request.form['password'])
+        error = webuser.register(**request.form)
         if not error:
             return redirect(url_for('timeline'))
-    pagedata = {}
-    pagedata['error'] = error
-    pagedata['user_uid'] = webuser.get_uid()
-    return render_template('register.html', **pagedata)
+    return render_template('register.html', error=error)
 
 @app.route("/login", methods=['GET', 'POST'])
+@logged_out_only
 def login():
     error = None
     if request.method == 'POST':
-        error = webuser.login(request.form['email'], request.form['password'])
+        error = webuser.login(**request.form)
         if not error:
             return redirect(url_for('timeline'))
-    pagedata = {}
-    pagedata['error'] = error
-    pagedata['user_uid'] = webuser.get_uid()
-    return render_template('login.html', **pagedata)
+    return render_template('login.html', error=error)
 
 @app.route("/")
 @app.route("/timeline")
+@logged_in_only
 def timeline():
-    if not webuser.authenticated():
-       return redirect(url_for('login'))
     pagedata = {}
     pagedata['user_uid'] = webuser.get_uid()
     pagedata['filtered_endorsements'] = webuser.get_all_endorsements()
     return render_template('timeline.html', **pagedata)
 
 @app.route("/user/<uid>")
+@logged_in_only
 def user(uid):
-    if not webuser.authenticated():
-       return redirect(url_for('login'))
     pagedata = {}
     pagedata['user_uid'] = webuser.get_uid()
     pagedata['userdata'] = webuser.get_user_data(uid)
@@ -53,18 +66,16 @@ def user(uid):
     return render_template('user.html', **pagedata)
 
 @app.route("/pending")
+@logged_in_only
 def pending():
-    if not webuser.authenticated():
-       return redirect(url_for('login'))
     pagedata = {}
     pagedata['user_uid'] = webuser.get_uid()
     pagedata['pending_endorsements'] = webuser.get_pending_endorsements()
     return render_template('pending.html', **pagedata)
 
 @app.route("/invite")
+@logged_in_only
 def invite():
-    if not webuser.authenticated():
-       return redirect(url_for('login'))
     pagedata = {}
     pagedata['user_uid'] = webuser.get_uid()
     return render_template('invite.html', **pagedata)
@@ -72,19 +83,22 @@ def invite():
 @app.route("/about")
 def about():
     pagedata = {}
-    pagedata['user_uid'] = webuser.get_uid()
+    if webuser.authenticated():
+        pagedata['user_uid'] = webuser.get_uid()
     return render_template('about.html', **pagedata)
 
 @app.route("/tos")
 def tos():
     pagedata = {}
-    pagedata['user_uid'] = webuser.get_uid()
+    if webuser.authenticated():
+        pagedata['user_uid'] = webuser.get_uid()
     return render_template('tos.html', **pagedata)
 
 @app.errorhandler(404)
 def page_not_found(error):
     pagedata = {}
-    pagedata['user_uid'] = webuser.get_uid()
+    if webuser.authenticated():
+        pagedata['user_uid'] = webuser.get_uid()
     return render_template('404.html', **pagedata), 404
 
 if __name__ == '__main__':
