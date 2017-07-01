@@ -47,7 +47,7 @@ class User(Database):
         return endorsements
 
     def get_pending_endorsements(self):
-        return self._get_db_data('pending/' + self.get_uid())
+        return self._get_db_array('pending/' + self.get_uid())
 
     def add_endorsement(self, uid_to, endorsement_text, time):
         endorsement = {
@@ -62,15 +62,17 @@ class User(Database):
 
     def accept_pending(self, pending_uid):
         endorsement = self._pop_db_array('pending/' + self.get_uid() + '/' + pending_uid)
-        uid_to = endorsement['to']
-        del endorsement['to']
-        self._push_db_array('endorsements/' + uid_to, endorsement)
+        if endorsement:
+            uid_to = endorsement['to']
+            del endorsement['to']
+            self._push_db_array('endorsements/' + uid_to, endorsement)
 
     def amend_pending(self, pending_uid, updated_text):
         endorsement = self._pop_db_array('pending/' + self.get_uid() + '/' + pending_uid)
-        endorsement['text'] = updated_text
-        next_uid = endorsement['from'] if endorsement['to'] == self.get_uid() else endorsement['to']
-        self._push_db_array('pending/' + next_uid, endorsement)
+        if endorsement:
+            endorsement['text'] = updated_text
+            next_uid = endorsement['from'] if endorsement['to'] == self.get_uid() else endorsement['to']
+            self._push_db_array('pending/' + next_uid, endorsement)
 
     def reject_pending(self, pending_uid):
         self._pop_db_array('pending/' + self.get_uid() + '/' + pending_uid)
