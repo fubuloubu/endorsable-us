@@ -15,7 +15,10 @@ def register():
         error = webuser.register(request.form['fullname'], request.form['email'], request.form['password'])
         if not error:
             return redirect(url_for('timeline'))
-    return render_template('register.html', error=error)
+    pagedata = {}
+    pagedata['error'] = error
+    pagedata['user_uid'] = webuser.get_uid()
+    return render_template('register.html', **pagedata)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -24,45 +27,64 @@ def login():
         error = webuser.login(request.form['email'], request.form['password'])
         if not error:
             return redirect(url_for('timeline'))
-    return render_template('login.html', error=error)
+    pagedata = {}
+    pagedata['error'] = error
+    pagedata['user_uid'] = webuser.get_uid()
+    return render_template('login.html', **pagedata)
 
 @app.route("/")
 @app.route("/timeline")
 def timeline():
     if not webuser.authenticated():
        return redirect(url_for('login'))
-    return render_template('timeline.html')
+    pagedata = {}
+    pagedata['user_uid'] = webuser.get_uid()
+    pagedata['filtered_endorsements'] = webuser.get_all_endorsements()
+    return render_template('timeline.html', **pagedata)
 
 @app.route("/user/<uid>")
 def user(uid):
     if not webuser.authenticated():
        return redirect(url_for('login'))
-    userdata = webuser.get_user_data(uid)
-    return render_template('user.html', userdata=userdata)
+    pagedata = {}
+    pagedata['user_uid'] = webuser.get_uid()
+    pagedata['userdata'] = webuser.get_user_data(uid)
+    pagedata['filtered_endorsements'] = webuser.get_endorsements_by_id(uid)
+    return render_template('user.html', **pagedata)
 
 @app.route("/pending")
 def pending():
     if not webuser.authenticated():
        return redirect(url_for('login'))
-    return render_template('pending.html')
+    pagedata = {}
+    pagedata['user_uid'] = webuser.get_uid()
+    return render_template('pending.html', **pagedata)
 
 @app.route("/invite")
 def invite():
     if not webuser.authenticated():
        return redirect(url_for('login'))
-    return render_template('invite.html')
+    pagedata = {}
+    pagedata['user_uid'] = webuser.get_uid()
+    return render_template('invite.html', **pagedata)
 
 @app.route("/about")
 def about():
-    return render_template('about.html')
+    pagedata = {}
+    pagedata['user_uid'] = webuser.get_uid()
+    return render_template('about.html', **pagedata)
 
 @app.route("/tos")
 def tos():
-    return render_template('tos.html')
+    pagedata = {}
+    pagedata['user_uid'] = webuser.get_uid()
+    return render_template('tos.html', **pagedata)
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('404.html'), 404
+    pagedata = {}
+    pagedata['user_uid'] = webuser.get_uid()
+    return render_template('404.html', **pagedata), 404
 
 if __name__ == '__main__':
     app.run()
