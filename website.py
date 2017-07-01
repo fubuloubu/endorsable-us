@@ -38,13 +38,14 @@ def register():
     return render_template('register.html', error=error)
 
 @app.route("/login", methods=['GET', 'POST'])
-@logged_out_only
 def login():
     error = None
     if request.method == 'POST':
         error = webuser.login(request.form)
         if not error:
             return redirect(url_for('timeline'))
+    else:
+        webuser.logout()
     return render_template('login.html', error=error)
 
 @app.route("/")
