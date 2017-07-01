@@ -41,13 +41,19 @@ class Database(object):
     def _del_db_data(self, key):
         return self._db.child(key).remove(self._id_token)
 
-    def _push_db_data(self, key, data):
+    def _push_db_array(self, key, data):
         self._db.child(key).push(data, self._id_token)
 
-    def _pop_db_data(self, key):
+    def _pop_db_array(self, key):
         data = self._get_db_data(key)
         self._del_db_data(key)
         return data
+    
+    def _get_db_array(self, key):
+        array = self._get_db_data(key)
+        if array:
+            array = map(lambda e: e.val(), array)
+        return array
         
     def get_uid(self):
         if self._uid is not None:
