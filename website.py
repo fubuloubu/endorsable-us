@@ -49,7 +49,7 @@ def user(uid):
     pagedata = {}
     pagedata['user_uid'] = webuser.get_uid()
     pagedata['userdata'] = webuser.get_user_data(uid)
-    pagedata['filtered_endorsements'] = webuser.get_endorsements_by_id(uid)
+    pagedata['filtered_endorsements'] = webuser.get_endorsements_by_uid(uid)
     return render_template('user.html', **pagedata)
 
 @app.route("/pending")
