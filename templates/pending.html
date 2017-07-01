@@ -1,3 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+<ul class="endorsement_list">
+  {% for endr in pending_endorsments %}
+    <li class="endorsement">
+      {% include "pending-endorsement.html" %}
+    </li>
+  {% endfor %}
+</ul>
 {% endblock %}
