@@ -1,65 +1,60 @@
 from flask import Flask, render_template, redirect, url_for, request
 app = Flask(__name__)
 
-def add_user(formdata):
-    #user = auth.sign_in_with_email_and_password(formdata.email, formdata.password)
-    # Add email and fullname to our database under /users
-    return False # If account has already been added
+from flask_debugtoolbar import DebugToolbarExtension
+app.config['SECRET_KEY'] = 'Temporary Secret Key. Update for Prod.'
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+toolbar = DebugToolbarExtension(app)
 
-def validate(formdata):
-    #user = auth.sign_in_with_email_and_password(formdata.email, formdata.password)
-    return False # If account is not in system
+def create_link(route, text):
+    return text
 
-def user_logged_in():
-    return False
-
-def create_link(routename, linktext):
-    return '<a href="' + url_for(routename) +'">' + linktext + '</a>'
-
-@app.route("/signup", methods=['GET', 'POST'])
-def signup():
+from firebase import User
+webuser = User()
+@app.route("/register", methods=['GET', 'POST'])
+def register():
     error = None
     if request.method == 'POST':
-        if add_user(request.form):
+        if webuser.register(request.form['fullname'], request.form['email'], request.form['password']):
             return redirect(url_for('timeline'))
         else:
             error = 'The email you provided is already in use' + \
                     '<br><br>You can login ' + create_link('login', 'here')
-    return render_template('signup.html', error=error)
+    return render_template('register.html', error=error)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
-        if validate(request.form):
+        if webuser.login(request.form['email'], request.form['password']):
             return redirect(url_for('timeline'))
         else:
             error = 'Your password is incorrect or you are not registered in the system' + \
-                    '<br><br>You can sign-up ' + create_link('signup', 'here')
+                    '<br><br>You can register ' + create_link('register', 'here')
     return render_template('login.html', error=error)
 
 @app.route("/")
 @app.route("/timeline")
 def timeline():
-    if not user_logged_in():
+    if not webuser.authenticated():
        return redirect(url_for('login'))
     return render_template('timeline.html')
 
 @app.route("/user/<uid>")
 def user(uid):
-    if not user_logged_in():
+    if not webuser.authenticated():
        return redirect(url_for('login'))
     return render_template('user.html')
 
 @app.route("/pending")
 def pending():
-    if not user_logged_in():
+    if not webuser.authenticated():
        return redirect(url_for('login'))
     return render_template('pending.html')
 
 @app.route("/invite")
 def invite():
-    if not user_logged_in():
+    if not webuser.authenticated():
        return redirect(url_for('login'))
     return render_template('invite.html')
 
