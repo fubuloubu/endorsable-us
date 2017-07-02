@@ -4,6 +4,7 @@ class User(Database):
     def __init__(self):
         Database.__init__(self)
     
+    # Getters
     def get_user_name(self, user_uid):
         return self._get_db_data('users/' + user_uid + '/name')
     
@@ -26,13 +27,6 @@ class User(Database):
     
     def get_data(self):
         return self.get_user_data(self.get_uid())
-
-    def add_relationship(self, friend_uid, relationship='friend'):
-        # Dual pointer relationship
-        self._set_db_data('relationships/' + self.get_uid() + \
-                '/' + friend_uid, relationship)
-        self._set_db_data('relationships/' + friend_uid + \
-                '/' + self.get_uid(), relationship)
 
     def get_user_relationships(self, user_uid):
         return self._get_db_array('relationships/' + user_uid, valname='type', keyname='uid')
@@ -63,8 +57,21 @@ class User(Database):
 
     def get_pending_endorsements(self):
         return self._get_db_array('pending/' + self.get_uid())
+    
+    # Actions
+    def add_relationship(self, formdata):
+        friend_uid = formdata['friend_uid']
+        relationship = formdata['relationship']
+        # Dual pointer relationship
+        self._set_db_data('relationships/' + self.get_uid() + \
+                '/' + friend_uid, relationship)
+        self._set_db_data('relationships/' + friend_uid + \
+                '/' + self.get_uid(), relationship)
 
-    def add_endorsement(self, uid_to, endorsement_text, time):
+    def add_endorsement(self, formdata):
+        uid_to = formdata['uid_to']
+        endorsement_text = formdata['endorsement_text']
+        time = formdata['time']
         endorsement = {
             "text" : endorsement_text,
             "from" : self.get_uid(),
@@ -75,19 +82,23 @@ class User(Database):
         }
         self._push_db_array('pending/' + uid_to, endorsement)
 
-    def accept_pending(self, pending_uid):
+    def accept_pending(self, formdata):
+        pending_uid = formdata['pending_uid']
         endorsement = self._pop_db_array('pending/' + self.get_uid() + '/' + pending_uid)
         if endorsement:
             uid_to = endorsement['to']
             del endorsement['to']
             self._push_db_array('endorsements/' + uid_to, endorsement)
 
-    def amend_pending(self, pending_uid, updated_text):
+    def amend_pending(self, formdata):
+        pending_uid = formdata['pending_uid']
+        updated_text = formdata['updated_text']
         endorsement = self._pop_db_array('pending/' + self.get_uid() + '/' + pending_uid)
         if endorsement:
             endorsement['text'] = updated_text
             next_uid = endorsement['from'] if endorsement['to'] == self.get_uid() else endorsement['to']
             self._push_db_array('pending/' + next_uid, endorsement)
 
-    def reject_pending(self, pending_uid):
+    def reject_pending(self, formdata):
+        pending_uid = formdata['pending_uid']
         self._pop_db_array('pending/' + self.get_uid() + '/' + pending_uid)
