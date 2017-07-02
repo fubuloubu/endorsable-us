@@ -25,6 +25,13 @@ class BasicUser(Database):
     def is_friend(self, user_uid):
         return user_uid in [r['uid'] for r in self.get_relationships()]
 
+    def get_all_users(self):
+        all_users = self._get_db_array('users', keyname='uid')
+        for u in all_users:
+            # Delete contact info
+            del u['email']
+        return all_users
+
     def get_pending_endorsements(self):
         endorsements = self._get_db_array('pending/' + self.get_uid())
         for endr in endorsements:

@@ -11,6 +11,7 @@
       <a class="page-link" id="logo" href="{{ url_for('timeline') }}">Logo</a>
       <div class="horizontal-fill"></div>
       {% if user_uid is defined %}
+        <a class="page-link" id="pending"  href="{{ url_for('search') }}">Search Users</a>
         <a class="page-link" id="pending"  href="{{ url_for('pending') }}">Pending Endorsements</a>
         <a class="page-link" id="profile"  href="{{ url_for('user', uid=user_uid) }}">My Profile</a>
         <a class="page-link" id="sign-out" href="{{ url_for('login') }}">Log Out</a>

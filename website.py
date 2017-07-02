@@ -104,6 +104,13 @@ def pending():
     pagedata['pending_endorsements'] = webuser.get_pending_endorsements()
     return render_template('pending.html', **pagedata)
 
+@app.route("/search")
+@logged_in_only
+def search():
+    pagedata = {}
+    pagedata['all_users'] = webuser.get_all_users()
+    return render_template('search.html', **pagedata)
+
 @app.route("/invite")
 @logged_in_only
 def invite():

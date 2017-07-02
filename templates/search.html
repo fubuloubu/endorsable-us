@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+  {% if all_users %}
+    <ul id="all_users">
+      {% for user in all_users %}
+        <li class="user">
+          <a href="{{ url_for('user', uid=user.uid) }}">{{ user.name }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}
