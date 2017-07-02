@@ -65,16 +65,16 @@ class AutoUser(BasicUser):
     
     # Automated Methods
     def pending_behavior(self, pending):
-        # Default is to accept all
-        self.accept_pending(pending)
+        # Default is to do nothing
+        pass
 
     def relationship_behavior(self, user):
-        # Default is to send a new endorsement every time
-        self.add_endorsement(user)
+        # Default is to do nothing
+        pass
 
     def unrelated_behavior(self, user):
-        # Default is to befriend all people
-        self.add_relationship(user)
+        # Default is to do nothing
+        pass
 
     def run_behavior(self, pausetime=1):
         for p in self.get_pending_endorsements():
