@@ -48,28 +48,50 @@ def login():
         webuser.logout()
     return render_template('login.html', error=error)
 
-@app.route("/")
-@app.route("/timeline")
+@app.route("/", methods=['GET', 'POST'])
+@app.route("/timeline", methods=['GET', 'POST'])
 @logged_in_only
 def timeline():
+    error = None
+    if request.method == 'POST':
+        print('Form data: {}'.format(request.form))
+        error = webuser.add_endorsement(request.form)
     pagedata = {}
+    pagedata['error'] = error
     pagedata['user_uid'] = webuser.get_uid()
+    pagedata['userdata'] = webuser.get_data()
     pagedata['filtered_endorsements'] = webuser.get_timeline_endorsements()
     return render_template('timeline.html', **pagedata)
 
-@app.route("/user/<uid>")
+@app.route("/user/<uid>", methods=['GET', 'POST'])
 @logged_in_only
 def user(uid):
+    error = None
+    if request.method == 'POST':
+        print('Form data: {}'.format(request.form))
+        error = webuser.add_endorsement(request.form)
     pagedata = {}
+    pagedata['error'] = error
     pagedata['user_uid'] = webuser.get_uid()
     pagedata['userdata'] = webuser.get_user_data(uid)
     pagedata['filtered_endorsements'] = webuser.get_user_endorsements(uid)
     return render_template('user.html', **pagedata)
 
-@app.route("/pending")
+@app.route("/pending", methods=['GET', 'POST'])
 @logged_in_only
 def pending():
+    error = None
+    if request.method == 'POST':
+        print('Form data: {}'.format(request.form))
+        function = request.form['function']
+        if function == 'Accept':
+            error = webuser.accept_pending(request.form)
+        elif function == 'Reject':
+            error = webuser.reject_pending(request.form)
+        elif function == 'Amend':
+            error = webuser.amend_pending(request.form)
     pagedata = {}
+    pagedata['error'] = error
     pagedata['user_uid'] = webuser.get_uid()
     pagedata['pending_endorsements'] = webuser.get_pending_endorsements()
     return render_template('pending.html', **pagedata)
