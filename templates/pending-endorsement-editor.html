@@ -1,14 +1,21 @@
 {% extends "endorsement-editor.html" %}
 {% if endr is defined %}
+  <h1>Amend Endorsement</h1>
+  <br>
   {% block fields %}
-  <div class="to-field">{{ endr.to }}</div>
-  <div class="time-field">{{ endr.time }}</div>
-  <div class="text-field" value="{{ endr.text }}"></div>
+    <div class="to-field">{{ endr.toname }}</div>
+    <div class="time-field">{{ endr.time }}</div>
+    <input type="text" value="{{ endr.text }}" name="text">
+    <br>
   {% endblock %}
   {% block extra %}
     <div>
-      <div>Amend</div>
-      <div>Cancel</div>
+      <input class="btn btn-default" type="submit" value="Amend">
+      {# Cancel button here reverts back to pending state #}
+      <!-- input class="btn btn-default" type="reset" value="Cancel" -->
     </div>
   {% endblock %}
+  {% if error %}
+    <p class="error"><strong>Error:</strong> {{ error }}</p>
+  {% endif %}
 {% endif %}
