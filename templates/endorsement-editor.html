@@ -1,31 +1,24 @@
 <div id="editor">
-  <h1>Add Endorsement</h1>
-  <br>
   <form action="" method="post">
-  {% block fields %}
-    <select placeholder="Who?" name="to">
+    <h1>Add Endorsement</h1>
+    <br>
+    <select name="uid_to">
       <option value="" disabled selected>Who?</option>
       {% for friend in userdata.relationships %}
         <option value="{{ friend.uid }}">{{ friend.name }}</option>
       {% endfor %}
-      <!-- invite option here -->
+      <!-- TODO: add invite option here -->
     </select>
-    <!-- need touid form element instead of name. Don't really care about name actually-->
     <br>
     <input type="text" placeholder="When?" name="time">
     <br>
-    <input type="text" placeholder="Why?" name="text">
+    <input type="text" placeholder="Why?" name="endorsement_text">
     <br>
-  {% endblock %}
-  {% block extra %}
-    <div>
-      <input class="btn btn-default" type="submit" value="Send">
-      {# Cancel button here clears the form #}
-      <!-- input class="btn btn-default" type="reset" value="Cancel" -->
-    </div>
-  {% endblock %}
+    <input class="btn btn-default" type="submit" name="function" value="Send">
+    {# Cancel button here clears the form #}
+    <input class="btn btn-default" type="submit" name="function" value="Cancel">
+  </form>
   {% if error %}
     <p class="error"><strong>Error:</strong> {{ error }}</p>
   {% endif %}
-  </form>
 </div>
