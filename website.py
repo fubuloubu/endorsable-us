@@ -105,6 +105,7 @@ def pending():
 @logged_in_only
 def search():
     pagedata = {}
+    pagedata['user_uid'] = webuser.get_uid()
     pagedata['all_users'] = webuser.get_all_users()
     return render_template('search.html', **pagedata)
 
