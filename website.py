@@ -69,7 +69,11 @@ def user(uid):
     error = None
     if request.method == 'POST':
         print('Form data: {}'.format(request.form))
-        error = webuser.add_endorsement(request.form)
+        function = request.form['function']
+        if function == 'Add Friend':
+            error = webuser.add_relationship(request.form)
+        elif function == 'Add Endorsement':
+            error = webuser.add_endorsement(request.form)
     pagedata = {}
     pagedata['error'] = error
     pagedata['user_uid'] = webuser.get_uid()
