@@ -5,8 +5,19 @@ class BasicUser(Database):
         Database.__init__(self)
     
     # Getters
+    def get_user_name(self, user_uid):
+        return self._get_db_data('users/' + user_uid + '/name')
+
+    def get_name(self):
+        return self.get_user_name(self.get_uid())
+    
     def get_user_relationships(self, user_uid):
-        return self._get_db_array('relationships/' + user_uid, valname='type', keyname='uid')
+        friends = self._get_db_array('relationships/' + user_uid, valname='type', keyname='uid')
+        if friends: # User has friends
+            #Add name from key, change value to type
+            for friend in friends:
+                friend['name'] = self.get_user_name(friend['uid'])
+        return friends
 
     def get_relationships(self):
         return self.get_user_relationships(self.get_uid())

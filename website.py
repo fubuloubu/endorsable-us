@@ -61,7 +61,7 @@ def timeline():
     pagedata = {}
     pagedata['error'] = error
     pagedata['user_uid'] = webuser.get_uid()
-    pagedata['userdata'] = webuser.get_data()
+    pagedata['my_relationships'] = webuser.get_relationships()
     pagedata['filtered_endorsements'] = webuser.get_timeline_endorsements()
     return render_template('timeline.html', **pagedata)
 
@@ -80,6 +80,7 @@ def user(uid):
     pagedata['error'] = error
     pagedata['user_uid'] = webuser.get_uid()
     pagedata['userdata'] = webuser.get_user_data(uid)
+    pagedata['my_relationships'] = webuser.get_relationships()
     pagedata['filtered_endorsements'] = webuser.get_user_endorsements(uid)
     pagedata['allow_add'] = not webuser.is_friend(uid)
     return render_template('user.html', **pagedata)

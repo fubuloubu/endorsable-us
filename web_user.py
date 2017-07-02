@@ -5,24 +5,13 @@ class WebUser(BasicUser):
         BasicUser.__init__(self)
     
     # Getters
-    def get_user_name(self, user_uid):
-        return self._get_db_data('users/' + user_uid + '/name')
-    
-    def get_name(self):
-        return self.get_user_name(self.get_uid())
-
     def get_user_data(self, user_uid):
         userdata = self._get_db_data('users/' + user_uid)
         # Don't give out contact information
         if self.get_uid() != user_uid:
             del userdata['email']
         userdata['uid'] = user_uid
-        friends = self.get_user_relationships(user_uid)
-        if friends: # User has friends
-            #Add name from key, change value to type
-            for friend in friends:
-                friend['name'] = self.get_user_name(friend['uid'])
-            userdata['relationships'] = friends
+        userdata['relationships'] = self.get_user_relationships(user_uid)
         return userdata
     
     def get_data(self):
