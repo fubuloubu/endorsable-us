@@ -34,6 +34,9 @@ class User(Database):
     def get_relationships(self):
         return self.get_user_relationships(self.get_uid())
 
+    def is_friend(self, user_uid):
+        return user_uid in [r['uid'] for r in self.get_relationships()]
+
     def get_user_endorsements(self, user_uid):
         endorsements = self._get_db_array('endorsements/' + user_uid)
         user_name = self.get_user_name(user_uid)

@@ -79,6 +79,7 @@ def user(uid):
     pagedata['user_uid'] = webuser.get_uid()
     pagedata['userdata'] = webuser.get_user_data(uid)
     pagedata['filtered_endorsements'] = webuser.get_user_endorsements(uid)
+    pagedata['allow_add'] = not webuser.is_friend(uid)
     return render_template('user.html', **pagedata)
 
 @app.route("/pending", methods=['GET', 'POST'])

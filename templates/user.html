@@ -9,7 +9,7 @@
       {% if userdata.relationships %}
         {% include "relationships.html" %}
       {% endif %}
-      {% if userdata.uid != user_uid %}
+      {% if userdata.uid != user_uid and allow_add %}
         {% include "add-friend.html" %}
       {% endif %}
     {% endif %}
