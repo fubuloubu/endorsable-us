@@ -1,8 +1,17 @@
-{% extends "endorsement.html" %}
-  {% block extra %}
-    <div>
-      <div>Accept</div>
-      <div>Ammend</div>
-      <div>Reject</div>
-    </div>
-  {% endblock %}
+<div id="editor">
+  <form action="" method="post">
+    {% if endr is defined %}
+      <div class="name">TO: {{ endr.toname }}</div>
+      <div class="time">AT: {{ endr.time }}</div>
+      <br>
+      <input type="text" value="{{ endr.text }}" name="updated_text">
+      <input type="hidden" name="pending_uid" value="{{ endr.key }}">
+      <br>
+      <input class="btn btn-default" type="submit" name="function" value="Accept">
+      <input class="btn btn-default" type="submit" name="function" value="Amend">
+      <input class="btn btn-default" type="submit" name="function" value="Reject">
+      {# Cancel button here reverts back to pending state #}
+      <input class="btn btn-default" type="submit" name="function" value="Cancel">
+    {% endif %}
+  </form>
+</div>
