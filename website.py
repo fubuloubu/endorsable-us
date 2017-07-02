@@ -6,8 +6,8 @@ app = Flask(__name__)
 #app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 #toolbar = DebugToolbarExtension(app)
 
-from user import User
-webuser = User()
+from web_user import WebUser
+webuser = WebUser()
 from functools import wraps
 # This decorator redirects user to login
 def logged_in_only(f):
