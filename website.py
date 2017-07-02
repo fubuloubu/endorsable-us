@@ -54,7 +54,6 @@ def login():
 def timeline():
     error = None
     if request.method == 'POST':
-        print('Form data: {}'.format(request.form))
         function = request.form['function']
         if function == 'Add Endorsement':
             error = webuser.add_endorsement(request.form)
@@ -70,7 +69,6 @@ def timeline():
 def user(uid):
     error = None
     if request.method == 'POST':
-        print('Form data: {}'.format(request.form))
         function = request.form['function']
         if function == 'Add Friend':
             error = webuser.add_relationship(request.form)
@@ -90,7 +88,6 @@ def user(uid):
 def pending():
     error = None
     if request.method == 'POST':
-        print('Form data: {}'.format(request.form))
         function = request.form['function']
         if function == 'Accept':
             error = webuser.accept_pending(request.form)
