@@ -26,7 +26,10 @@ class BasicUser(Database):
         return user_uid in [r['uid'] for r in self.get_relationships()]
 
     def get_pending_endorsements(self):
-        return self._get_db_array('pending/' + self.get_uid())
+        endorsements = self._get_db_array('pending/' + self.get_uid())
+        for endr in endorsements:
+            endr['fromname'] = self.get_user_name(endr['from'])
+        return endorsements
     
     # Actions
     def add_relationship(self, formdata):

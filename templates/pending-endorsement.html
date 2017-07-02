@@ -1,7 +1,7 @@
 <div id="editor">
   <form action="" method="post">
     {% if endr is defined %}
-      <div class="name">TO: {{ endr.toname }}</div>
+      <div class="name">FROM: {{ endr.fromname }}</div>
       <div class="time">AT: {{ endr.time }}</div>
       <br>
       <input type="text" value="{{ endr.text }}" name="updated_text">
