@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from auto_user import AutoUser
 
 class TrialUser(AutoUser):
