@@ -10,7 +10,7 @@
         {% include "relationships.html" %}
       {% endif %}
       {% if userdata.uid != user_uid %}
-        <div id="add-friend">Add Friend</div>
+        {% include "add-friend.html" %}
       {% endif %}
     {% endif %}
   </div>
