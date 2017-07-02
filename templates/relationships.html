@@ -1,8 +1,9 @@
   <ul id="relationship_list">
     {% for relationship in userdata.relationships %}
       <li class="relationship">
-        <div class="relationship-name" >{{ relationship.name  }}</div>
-        <div class="relationship-type" >{{ relationship.type  }}</div>
+        <a href="{{ url_for('user', uid=relationship.uid) }}">
+            {{ relationship.name  }}
+        </a> ({{ relationship.type  }})
       </li>
     {% endfor %}
   </ul>
