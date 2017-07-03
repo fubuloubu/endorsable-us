@@ -12,8 +12,9 @@
   </head>
   <body>
     <div class="wrapper" id="header">
+      <div class="flex-fill"></div>
       {{ btn.img_btn('timeline', 'logo') }}
-      <div class="horz-fill"></div>
+      <div class="flex-fill"></div>
       {% if user_uid is defined %}
         {{ btn.text_btn('search',   'search users') }}
         {{ btn.text_btn('pending',  'pending') }}
@@ -23,18 +24,21 @@
         {{ btn.text_btn('register', 'register') }}
         {{ btn.text_btn('login',    'login') }}
       {% endif %}
+      <div class="flex-fill"></div>
     </div>
-    <div class="vert-fill"></div>
+    <div class="flex-fill"></div>
     <div class="wrapper" id="content">
       {% block content %}
       {% endblock %}
     </div>
-    <div class="vert-fill"></div>
+    <div class="flex-fill"></div>
     <div class="wrapper" id="footer">
+      <div class="flex-fill"></div>
       {{ btn.text_btn('about',  'about') }}
       {{ btn.text_btn('tos',    'terms of service') }}
-      <div class="horz-fill"></div>
+      <div class="flex-fill"></div>
       <div>&copy; 2017 by the endorsable team</div>
+      <div class="flex-fill"></div>
     </div>
   </body>
 </html>
