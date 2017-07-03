@@ -1,3 +1,5 @@
+{% import "button.html" as btn %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,27 +12,29 @@
   </head>
   <body>
     <div class="wrapper" id="header">
-      <a class="page-link" id="logo" href="{{ url_for('timeline') }}">Logo</a>
-      <div class="horizontal-fill"></div>
+      {{ btn.img_btn('timeline', 'logo') }}
+      <div class="horz-fill"></div>
       {% if user_uid is defined %}
-        <a class="page-link" id="pending"  href="{{ url_for('search') }}">Search Users</a>
-        <a class="page-link" id="pending"  href="{{ url_for('pending') }}">Pending Endorsements</a>
-        <a class="page-link" id="profile"  href="{{ url_for('user', uid=user_uid) }}">My Profile</a>
-        <a class="page-link" id="sign-out" href="{{ url_for('login') }}">Log Out</a>
+        {{ btn.text_btn('search',   'search users') }}
+        {{ btn.text_btn('pending',  'pending') }}
+        {{ btn.text_btn('user',     'profile', uid=user_uid) }}
+        {{ btn.text_btn('login',    'logout') }}
       {% else %}
-        <a class="page-link" href="{{ url_for('register') }}">Register</a>
-        <a class="page-link" href="{{ url_for('login') }}">Login</a>
+        {{ btn.text_btn('register', 'register') }}
+        {{ btn.text_btn('login',    'login') }}
       {% endif %}
     </div>
+    <div class="vert-fill"></div>
     <div class="wrapper" id="content">
       {% block content %}
       {% endblock %}
     </div>
+    <div class="vert-fill"></div>
     <div class="wrapper" id="footer">
-      <div>by the endorsable.us team!</div>
-      <div class="horizontal-fill"></div>
-      <a class="page-link" href="{{ url_for('about') }}">About</a>
-      <a class="page-link" href="{{ url_for('tos') }}">Terms of Service</a>
+      {{ btn.text_btn('about',  'about') }}
+      {{ btn.text_btn('tos',    'terms of service') }}
+      <div class="horz-fill"></div>
+      <div>&copy; 2017 by the endorsable team</div>
     </div>
   </body>
 </html>

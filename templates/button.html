@@ -1,0 +1,10 @@
+{% macro img_btn(page, img_name) %}
+  <a class="{{ page }}-btn" href="{{ url_for('{}'.format( page )) }}">
+      <object data="{{ url_for('static', filename='{}.svg'.format( img_name )) }}" type="image/svg+xml">
+          <img src="{{ url_for('static', filename='{}.png'.format( img_name )) }}"/>
+    </object>
+  </a>
+{% endmacro %}
+{% macro text_btn(page, text) %}
+  <a class="{{ page }}-btn" href="{{ url_for('{}'.format( page )) }}">{{ text }}</a>
+{% endmacro %}
