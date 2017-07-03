@@ -2,8 +2,6 @@
 body { margin: 0em; font-family: sans-serif; background: #ffffff; }
 
 .wrapper            { display: flex; justify-content: center; align-items: center; }
-.wrapper > *        { }
-#content            { flex-direction: column } 
 .flex-fill          { flex-grow: 1; }
 
 #header             { background: #202020; height: 4em; } 
@@ -14,8 +12,16 @@ body { margin: 0em; font-family: sans-serif; background: #ffffff; }
 #header > a:hover, 
 #footer > a:hover   { color: #69e8b4; text-decoration: underline; }
 
+#content            { flex-direction: column } 
 
 /************************  button.html macros  ***************************/
 object              { pointer-events: none; }
 /* Picture buttons need a width to render correctly */
 .timeline-btn       { width: 10em; }
+
+/********************************  FORMS  ********************************/
+form                { display: flex; flex-direction: column; justify-content: center; 
+                      background: #202020; padding: 1em; margin: 3em; }
+form > h1           { color: #39b884; font-size: 2em; }
+.form-btn-area      { display: flex; flex-direction: row; justify-content: center; align-items: center; } 
+.form-btn           { flex-grow: 1; }
