@@ -5,6 +5,10 @@
     </object>
   </a>
 {% endmacro %}
-{% macro text_btn(page, text) %}
-  <a class="{{ page }}-btn" href="{{ url_for('{}'.format( page )) }}">{{ text }}</a>
+{% macro text_btn(page, text, uid='') %}
+  {% if uid %}
+    <a class="{{ page }}-btn" href="{{ url_for('{}'.format( page ), uid=uid) }}">{{ text }}</a>
+  {% else %}
+    <a class="{{ page }}-btn" href="{{ url_for('{}'.format( page )) }}">{{ text }}</a>
+  {% endif %}
 {% endmacro %}
