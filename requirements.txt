@@ -5,6 +5,7 @@ Flask-DebugToolbar==0.10.1
 Flask-WTF==0.14.2
 gcloud==0.17.0
 googleapis-common-protos==1.5.2
+gunicorn==19.7.1
 httplib2==0.10.3
 itsdangerous==0.24
 Jinja2==2.9.6
