@@ -1,5 +1,18 @@
 import pyrebase
 from requests import exceptions as request_exceptions
+
+# Decorator for checking if authorization is still active
+def auth_required(decorated_function):
+    def auth_check(self, *args, **kwargs):
+        try:
+            f = decorated_function(self, *args, **kwargs)
+        except request_exceptions.HTTPError as error:
+            if error.errno.response.status_code == 401: # Unauthorized
+                self.refresh_session()
+                f = decorated_function(self, *args, **kwargs)
+        return f
+    return auth_check
+        
 class Database(object):
     def __init__(self):
         config = {
@@ -28,49 +41,10 @@ class Database(object):
             self._id_token = None
             self._refresh_token = None
             self._timeout = None
-        
-    def _get_db_data(self, key):
-        return self._db.child(key).get(self._id_token).val()
 
-    def _set_db_data(self, key, data):
-        self._db.child(key).set(data, self._id_token)
-
-    def _upd_db_data(self, key, data):
-        self._db.child(key).update(data, self._id_token)
-        
-    def _del_db_data(self, key):
-        return self._db.child(key).remove(self._id_token)
-
-    def _push_db_array(self, key, data):
-        self._db.child(key).push(data, self._id_token)
-
-    def _pop_db_array(self, key):
-        data = self._get_db_data(key)
-        self._del_db_data(key)
-        return data
-    
-    def _get_db_array(self, key, keyname='key', valname='val'):
-        ordered_dict = self._get_db_data(key)
-        if ordered_dict:
-            # Actually OrderedDict, a list of tuples basically
-            # so we are going to convert back to a list of dicts
-            def od_to_dict(key, val):
-                if isinstance(val, dict):
-                    obj = val.copy()
-                else:
-                    obj = {}
-                    obj[valname] = val
-                obj[keyname] = key
-                return obj
-            ordered_dict = [ od_to_dict(key, val) for key, val in ordered_dict.items() ]
-            return ordered_dict
-        else:
-            return []
-        
-    def get_uid(self):
-        if self._uid is not None:
-            return self._uid
-        return ''
+    def _refresh_session(self):
+        user = self._auth.refresh(self.refresh_token)
+        self._set_auth_data(user)
         
     # Perform a login
     def login(self, formdata):
@@ -106,11 +80,6 @@ class Database(object):
                 You should use the login page to login if you already have an account.'''
             return error # Registration unsuccessful
 
-    def _refresh_session(self):
-        user = self._auth.refresh(self.refresh_token)
-        self._id_token = user['idToken']
-        self._refresh_token = user['refreshToken']
-
     # Check if session token is active
     def _is_session_expired(self):
         return self._refresh_token is None
@@ -118,3 +87,51 @@ class Database(object):
     # User has authenticated and has an active session token
     def authenticated(self):
         return self._id_token is not None and not self._is_session_expired()
+    
+    def get_uid(self):
+        if self._uid is not None:
+            return self._uid
+        return ''
+    
+    @auth_required
+    def _get_db_data(self, key):
+        return self._db.child(key).get(self._id_token).val()
+
+    @auth_required
+    def _set_db_data(self, key, data):
+        self._db.child(key).set(data, self._id_token)
+
+    @auth_required
+    def _upd_db_data(self, key, data):
+        self._db.child(key).update(data, self._id_token)
+        
+    @auth_required
+    def _del_db_data(self, key):
+        return self._db.child(key).remove(self._id_token)
+
+    @auth_required
+    def _push_db_array(self, key, data):
+        self._db.child(key).push(data, self._id_token)
+
+    def _pop_db_array(self, key):
+        data = self._get_db_data(key)
+        self._del_db_data(key)
+        return data
+    
+    def _get_db_array(self, key, keyname='key', valname='val'):
+        ordered_dict = self._get_db_data(key)
+        if ordered_dict:
+            # Actually OrderedDict, a list of tuples basically
+            # so we are going to convert back to a list of dicts
+            def od_to_dict(key, val):
+                if isinstance(val, dict):
+                    obj = val.copy()
+                else:
+                    obj = {}
+                    obj[valname] = val
+                obj[keyname] = key
+                return obj
+            ordered_dict = [ od_to_dict(key, val) for key, val in ordered_dict.items() ]
+            return ordered_dict
+        else:
+            return []
