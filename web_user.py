@@ -21,6 +21,7 @@ class WebUser(BasicUser):
         endorsements = self._get_db_array('endorsements/' + user_uid)
         user_name = self.get_user_name(user_uid)
         for endr in endorsements:
+            endr['to'] = user_uid
             endr['toname'] = user_name
             endr['fromname'] = self.get_user_name(endr['from'])
         return endorsements
