@@ -1,0 +1,29 @@
+{
+  "rules": {
+    ".read" : "auth != null", // Users need to be authenticated to read any data
+    "users": {
+      "$uid": {
+        "email" : {
+          ".read" : "$uid === auth.uid" // Only you can access your own contact info
+        },
+        ".write": "$uid === auth.uid" // Only you can write your own user info
+      }
+    },
+    "endorsements": {
+    	"$uid" : {
+        ".write" : "$uid === auth.uid" // Only you can publish an endorsement
+      }
+    },
+    "pending": {
+    	"$uid" : {
+        ".read" : "$uid === auth.uid", // Only you can see your queue
+        ".write" : "auth != null" // People can write into your queue
+      }
+    },
+    "relationships": {
+    	"$uid" : {
+        ".write" : "auth != null" // This should ultimately be only uid, but we'd need friend requests then
+      }
+    }
+  }
+}
