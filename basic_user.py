@@ -67,8 +67,14 @@ class BasicUser(Database):
         endorsement = self._pop_db_array('pending/' + self.get_uid() + '/' + pending_uid)
         if endorsement:
             uid_to = endorsement['to']
-            del endorsement['to']
-            self._push_db_array('endorsements/' + uid_to, endorsement)
+            # If you are the recipient, you can publish the endorsement
+            if self.get_uid() == uid_to:
+                del endorsement['to']
+                self._push_db_array('endorsements/' + uid_to, endorsement)
+            else:
+                # otherwise, you need to push it to the recipient's 
+                # queue for final acceptance
+                self._push_db_array('pending/' + uid_to, endorsement)
 
     def amend_pending(self, formdata):
         pending_uid = formdata['pending_uid']
