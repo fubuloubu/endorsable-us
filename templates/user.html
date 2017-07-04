@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "relationships.html" import list_relationships, add_form as add_relationship %}
 {% block content %}
   <div class="column">
     {% if userdata is defined %}
@@ -7,10 +8,10 @@
         <div id="email">{{ userdata.email }}</div>
       {% endif %}
       {% if userdata.relationships %}
-        {% include "relationships.html" %}
+        {{ list_relationships(userdata.relationships[:3]) }}
       {% endif %}
       {% if userdata.uid != user_uid and allow_add %}
-        {% include "add-friend.html" %}
+        {{ add_relationship(userdata.uid) }}
       {% endif %}
     {% endif %}
   </div>

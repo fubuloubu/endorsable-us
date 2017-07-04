@@ -22,14 +22,18 @@ class BasicUser(Database):
     def get_relationships(self):
         return self.get_user_relationships(self.get_uid())
 
-    def is_friend(self, user_uid):
+    def get_relationship_type(self, user_uid):
+        return self._get_db_data('relationships/' + self.get_uid() + '/' + user_uid)
+    
+    def is_connected(self, user_uid):
         return user_uid in [r['uid'] for r in self.get_relationships()]
 
     def get_all_users(self):
         all_users = self._get_db_array('users', keyname='uid')
         for u in all_users:
-            # Delete contact info
-            del u['email']
+            # Add if connected
+            if self.is_connected(u['uid']):
+                u['relationship_type'] = self.get_relationship_type(u['uid'])
         return all_users
 
     def get_pending_endorsements(self):

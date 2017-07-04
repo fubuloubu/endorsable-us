@@ -1,9 +1,24 @@
-  <ul id="relationship_list">
-    {% for relationship in userdata.relationships %}
-      <li class="relationship">
-        <a href="{{ url_for('user', uid=relationship.uid) }}">
-            {{ relationship.name  }}
-        </a> ({{ relationship.type  }})
+{% macro add_form(uid) %}
+  <form action="" method="post">
+    <input type="hidden" name="friend_uid" value="{{ uid }}">
+    <select name="relationship">
+      <option>friend</option>
+    </select>
+    <input class="btn btn-default" type="submit" name="function" value="Add Friend">
+  </form>
+{% endmacro %}
+
+{% macro list_relationships(user_list) %}
+  <ul id="user-list">
+    {% for user in user_list %}
+      <li class="user">
+        <a href="{{ url_for('user', uid=user.uid) }}">{{ user.name }}</a>
+        {% if user.relationship_type %}
+          ({{ user.relationship_type }})
+        {% else %}
+          {{ add_form(user.uid) }}
+        {% endif %}
       </li>
     {% endfor %}
   </ul>
+{% endmacro %}
