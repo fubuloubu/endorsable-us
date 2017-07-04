@@ -1,9 +1,12 @@
 {% if endr is defined %}
 <div class="endorsement">
-  <div>{{ endr.fromname}}</div>
-  <div>{{ endr.toname }}</div>
-  <div>{{ endr.time }}</div>
-  <div>{{ endr.text }}</div>
+  <div class="endr-header">
+    <div class="endr-from">{{ btn.text_btn('user', '{}'.format(endr.fromname), uid='{}'.format(endr.from)) }}</div>
+    <div class="endr-arrow">&nbsp;&rarr;&nbsp;</div>
+    <div class="endr-to"  >{{ btn.text_btn('user', '{}'.format(endr.toname),   uid='{}'.format(endr.to))   }}</div>
+    <div class="endr-time">({{ endr.time }})</div>
+  </div>
+  <div class="endr-body">{{ endr.text }}</div>
   {% block extra %}
   {% endblock %}
 </div>

@@ -1,12 +1,12 @@
 /******************  Overall Page Styling (base.html)  *******************/
-body { margin: 0em; font-family: sans-serif; background: #ffffff; }
+body                { margin: 0em; font-family: sans-serif; background: #ffffff; }
 
 .wrapper            { display: flex; justify-content: center; align-items: center; }
 .flex-fill          { flex-grow: 1; }
 
 #header             { background: #202020; height: 4em; } 
 #header > a, 
-#footer > a         { color: #39b884; font-size: 1.5em; margin: 0 1em; text-decoration: none; }
+#footer > a         { color: #39b884; font-size: 1.2em; margin: 0 1em; text-decoration: none; }
 #header > div, 
 #footer > div       { color: #A0A0A0; font-size: 1.2em; margin: 0 1em; }
 #header > a:hover, 
@@ -20,10 +20,23 @@ object              { pointer-events: none; }
 .timeline-btn       { width: 10em; }
 
 /********************************  FORMS  ********************************/
-textarea, input, button, select { font-family: inherit; font-size: inherit; }
+textarea, input,
+button, select      { font-family: inherit; font-size: inherit; }
 form                { display: flex; flex-direction: column; justify-content: center;
                       background: #202020; padding: 1em; margin: 3em; }
 form > h1           { color: #39b884; font-size: 2em; margin: 0 0 0.25em 0;}
 .form-textarea      { resize: none; border-radius: 8px; }
 .form-btn-area      { display: flex; flex-direction: row; justify-content: center; align-items: center; }
 .form-btn           { flex-grow: 1; }
+
+/*************************  endorsement.html  ****************************/
+.endorsement-list   { display: flex; flex-direction: column; }
+.endorsement        { display: flex; flex-direction: column; justify-content: center;
+                      background: #202020; padding: 0 0.25em; margin: 1em; }
+.endr-header        { margin: 0.25em 0; }
+.endr-header > div  { color: #69e8b4; display: inline-block; }
+.endr-to > a,
+.endr-from>a        { color: #39b884; font-size: 1.0em; text-decoration: none; }
+.endr-to > a:hover,
+.endr-from>a:hover  { color: #69e8b4; text-decoration: underline; }
+.endr-body          { color: #39b884; font-size: 1em; margin: 0.25em 0; }
