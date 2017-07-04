@@ -9,8 +9,8 @@ body                { margin: 0em; font-family: sans-serif; background: #ffffff;
 #footer > a         { color: #39b884; font-size: 1.2em; margin: 0 1em; text-decoration: none; }
 #header > div, 
 #footer > div       { color: #A0A0A0; font-size: 1.2em; margin: 0 1em; }
-#header > a:hover, 
-#footer > a:hover   { color: #69e8b4; text-decoration: underline; }
+#header > a:hover   { color: #69e8b4; text-decoration: underline; }
+#footer > a:hover   { color: #099854; text-decoration: underline; }
 
 #content            { flex-direction: column } 
 
