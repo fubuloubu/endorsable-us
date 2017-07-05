@@ -25,11 +25,16 @@ class BasicUser(Database):
     def get_relationship_type(self, user_uid):
         return self._get_db_data('relationships/' + self.get_uid() + '/' + user_uid)
     
+    def is_me(self, user_uid):
+        return user_uid == self.get_uid()
+    
     def is_connected(self, user_uid):
         return user_uid in [r['uid'] for r in self.get_relationships()]
 
     def get_all_users(self):
         all_users = self._get_db_array('users', keyname='uid')
+        # Remove self
+        all_users = list(filter(lambda u: not self.is_me(u['uid']), all_users))
         for u in all_users:
             # Add if connected
             if self.is_connected(u['uid']):
