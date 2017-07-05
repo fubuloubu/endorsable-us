@@ -40,3 +40,10 @@ form > h1           { color: #39b884; font-size: 2em; margin: 0 0 0.25em 0;}
 .endr-to > a:hover,
 .endr-from>a:hover  { color: #69e8b4; text-decoration: underline; }
 .endr-body          { color: #39b884; font-size: 1em; margin: 0.25em 0; }
+
+/************************  relationships.html  ***************************/
+#user-list          { display: flex; flex-direction: column; list-style-type: none; }
+.user               { margin: 0.25em 0; }
+.user > a           { color: #39b884; font-size: 1.0em; text-decoration: none; }
+.user > a:hover     { color: #099854; text-decoration: underline; }
+.user > form        { background: #FFFFFF; display: inline-block; margin: 0em; }
