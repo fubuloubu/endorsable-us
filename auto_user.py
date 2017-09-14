@@ -96,7 +96,7 @@ class AutoUser(BasicUser):
         # Return true if there any reasons to exit polling
         return not self.authenticated()
 
-    def use_website(self, timeout, step):
+    def use_website(self, timeout=180, step=30):
         # Poll the website for updates
         while timeout > 0:
             self.run_behavior()
