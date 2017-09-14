@@ -65,14 +65,18 @@ class AutoUser(BasicUser):
     
     # Automated Methods
     def pending_behavior(self, pending):
+        print('({0}) Doing nothing in response to pending endorsement {1}'.
+                format(self.uid, pending['key']))
         # Default is to do nothing
         pass
 
     def relationship_behavior(self, user):
+        print('({0}) Doing nothing for my friend {1}'.format(self.uid, user['uid']))
         # Default is to do nothing
         pass
 
     def unrelated_behavior(self, user):
+        print("({0}) Doing nothing for unknown user {1}".format(self.uid, user['uid']))
         # Default is to do nothing
         pass
 
