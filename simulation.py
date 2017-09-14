@@ -2,9 +2,6 @@
 from auto_user import AutoUser
 
 class TrialUser(AutoUser):
-    def __init__(self, name, email):
-        AutoUser.__init__(self, name, email)
-    
     # Overriden
     def pending_behavior(self, pending):
         # Default is to accept all
@@ -19,9 +16,6 @@ class TrialUser(AutoUser):
     def unrelated_behavior(self, user):
         # Default is to befriend all people
         self.add_relationship(user)
-    
-    def use_website(self, timeout=180, step=30):
-        super().use_website(timeout=timeout, step=step)
 
 def main(userfile, runtime, numthreads):
     
