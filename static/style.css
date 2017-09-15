@@ -6,7 +6,8 @@ p                   { margin: 1em; width: 100%; text-align: left }
 .wrapper            { display: flex; justify-content: center; align-items: center; }
 .flex-fill          { flex-grow: 1; }
 
-#header             { background: #202020; height: 4em; } 
+#header             { background: #202020; height: 4em; position: fixed; top: 0; width: 100% }
+#content            { margin-top: 4em; }
 #header > a, 
 #footer > a         { color: #39b884; font-size: 1.2em; margin: 0 1em; text-decoration: none; }
 #header > div, 
