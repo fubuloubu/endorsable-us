@@ -39,4 +39,8 @@ the public blockchain need not show "too much" about our system, only how the du
 The private blockchains being built have value towards end-user customers who want to review a user's experiences
 
 Client code (the dapp) need not have open source code, or at least the game system/data processing remain core IP... Maybe clients communicate to us their findings (mining private data?), and we process that on our server into the public blockchain for all to see.
+
+Customers pay us a fee to convert endorsements into skill points through our contract, that's how we make money. The more people use it, the more we make
+
+The safest way to store the interactions would be to have the receiver of the endorsement store the value. The sender must sign off on it as a last step when it is committed.
 -->
