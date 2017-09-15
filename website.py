@@ -1,6 +1,9 @@
 from flask import Flask, render_template, redirect, url_for, request
 app = Flask(__name__)
 
+from flaskext.markdown import Markdown
+Markdown(app)
+
 #from flask_debugtoolbar import DebugToolbarExtension
 #app.config['SECRET_KEY'] = 'Temporary Secret Key. Update for Prod.'
 #app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False

@@ -1,34 +1,40 @@
 {% extends "base.html" %}
-{% block content | markdown %}
-  You are not just a number. But you knew that already.
-  The problem is that the people who are looking for you can only find you by numbers.
-  That means unless you follow the rules precisely, they're missing out on what you can provide.
-  They don't see what drives you, your passion, how you're able to make others smile or 
-  keep going when the going gets tough. They get thousands of resumes a day, and they sift
-  through it with primative tools that boils you down to a single number. 
-  If you pass that, only then would they give your credentials a read.
+{% block content %}
+{% filter markdown %}
+Mission
+-------
 
-  Endorsable is not like that. Our platform wants to reduce you to many numbers.
-  More importantly, we are trying to model who you are professionally by analyzing
-  thousands of data points provided by the people who know you best: your coworkers.
-  Our hope is that we can represent who you are in a format that makes it easy for the
-  people that are looking for you to actually find you. Your skills, your talents,
-  your charisma, your personality is really what these people need to figure out if
-  you're the one you're looking for, not just whether you can write a few pages that
-  checks a few boxes in some computer software somewhere. 
-  
-  This is our goal. If you are tired of feeling looked over and undervalued, or are
-  looking to differentiate yourself, we hope you will join us on our mission.
+You are not just a number. But you knew that already.
+The problem is that the people who are looking for you can only find you by numbers.
+That means unless you follow the rules precisely, they're missing out on what you can provide.
+They don't see what drives you, your passion, how you're able to make others smile or 
+keep going when the going gets tough. They get thousands of resumes a day, and they sift
+through it with primative tools that boils you down to a single number. 
+If you pass that, only then would they give your credentials a read.
 
-  ----
+Endorsable is not like that. Our platform wants to reduce you to many numbers.
+More importantly, we are trying to model who you are professionally by analyzing
+thousands of data points provided by the people who know you best: your coworkers.
+Our hope is that we can represent who you are in a format that makes it easy for the
+people that are looking for you to actually find you. Your skills, your talents,
+your charisma, your personality is really what these people need to figure out if
+you're the one you're looking for, not just whether you can write a few pages that
+checks a few boxes in some computer software somewhere. 
 
-  Endorsable is a different kind of company. Yes, we need your data to do what we do.
-  However, the majority of the code we use to do it is available open-source.
-  Our closed-source tools are there to help companies find you, if you ask for it.
-  We don't make money from selling your data to third parties.
-  Our income is based solely on how you use our platform, and whether you want us
-  to make you available to oppurtunities from third parties.
-  Consider us a matchmaking service. 
-  You pay us to help you find the right job at the right time to make you happy.
-  If you have questions or concerns, please contact us.
+This is our goal. If you are tired of feeling looked over and undervalued, or are
+looking to differentiate yourself, we hope you will join us on our mission.
+
+About
+-----
+
+Endorsable is a different kind of company. Yes, we need your data to do what we do.
+However, the majority of the code we use to do it is available open-source.
+Our closed-source tools are there to help companies find you, if you ask for it.
+We don't make money from selling your data to third parties.
+Our income is based solely on how you use our platform, and whether you want us
+to make you available to oppurtunities from third parties.
+Consider us a matchmaking service. 
+You pay us to help you find the right job at the right time to make you happy.
+If you have questions or concerns, please contact us.
+{% endfilter%}
 {% endblock %}
