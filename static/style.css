@@ -1,6 +1,8 @@
 /******************  Overall Page Styling (base.html)  *******************/
 body                { margin: 0em; font-family: sans-serif; background: #ffffff; }
 
+p                   { margin: 1em; width: 100%; text-align: left }
+
 .wrapper            { display: flex; justify-content: center; align-items: center; }
 .flex-fill          { flex-grow: 1; }
 
