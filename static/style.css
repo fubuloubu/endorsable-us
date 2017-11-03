@@ -3,19 +3,17 @@ body                { margin: 0em; font-family: sans-serif; background: #ffffff;
 
 p                   { margin: 1em; width: 100%; text-align: left }
 
-.wrapper            { display: flex; justify-content: center; align-items: center; }
+.wrapper            { display: flex; justify-content: center; align-items: center; width: 100%; }
 .flex-fill          { flex-grow: 1; }
 
-#header             { background: #202020; height: 4em; position: fixed; top: 0; width: 100% }
-#content            { margin-top: 4em; }
+#header             { background: #202020; height: 4em; position: fixed; top: 0; }
+#content            { margin-top: 4em; flex-direction: column }
 #header > a, 
 #footer > a         { color: #39b884; font-size: 1.2em; margin: 0 1em; text-decoration: none; }
 #header > div, 
 #footer > div       { color: #A0A0A0; font-size: 1.2em; margin: 0 1em; }
 #header > a:hover   { color: #69e8b4; text-decoration: underline; }
 #footer > a:hover   { color: #099854; text-decoration: underline; }
-
-#content            { flex-direction: column } 
 
 /************************  button.html macros  ***************************/
 object              { pointer-events: none; }
