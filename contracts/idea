@@ -1,0 +1,3 @@
+transfer() burns reputation to send intention as a token
+no allowance stuff
+receive() adds reputation from intention
